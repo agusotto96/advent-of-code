@@ -34,17 +34,22 @@ fun trueIndicationsPoints(trueIndications: List<TrueIndication>): Int =
     trueIndications.map(::trueIndicationPoints).sum()
 
 fun Shape(trueIndication: TrueIndication): Shape =
-    when (trueIndication) {
-        Shape.Rock to Outcome.Lose -> Shape.Scissor
-        Shape.Rock to Outcome.Draw -> Shape.Rock
-        Shape.Rock to Outcome.Win -> Shape.Paper
-        Shape.Paper to Outcome.Lose -> Shape.Rock
-        Shape.Paper to Outcome.Draw -> Shape.Paper
-        Shape.Paper to Outcome.Win -> Shape.Scissor
-        Shape.Scissor to Outcome.Lose -> Shape.Paper
-        Shape.Scissor to Outcome.Draw -> Shape.Scissor
-        Shape.Scissor to Outcome.Win -> Shape.Rock
-        else -> throw IllegalArgumentException()
+    when (trueIndication.first) {
+        Shape.Rock -> when (trueIndication.second) {
+            Outcome.Lose -> Shape.Scissor
+            Outcome.Draw -> Shape.Rock
+            Outcome.Win -> Shape.Paper
+        }
+        Shape.Paper -> when (trueIndication.second) {
+            Outcome.Lose -> Shape.Rock
+            Outcome.Draw -> Shape.Paper
+            Outcome.Win -> Shape.Scissor
+        }
+        Shape.Scissor -> when (trueIndication.second) {
+            Outcome.Lose -> Shape.Paper
+            Outcome.Draw -> Shape.Scissor
+            Outcome.Win -> Shape.Rock
+        }
     }
 
 fun Shape(symbol: Char): Shape =
@@ -81,17 +86,22 @@ fun outcomePoints(outcome: Outcome): Int =
     }
 
 fun Outcome(assumedIndication: AssumedIndication): Outcome =
-    when (assumedIndication) {
-        Shape.Rock to Shape.Rock -> Outcome.Draw
-        Shape.Rock to Shape.Paper -> Outcome.Win
-        Shape.Rock to Shape.Scissor -> Outcome.Lose
-        Shape.Paper to Shape.Rock -> Outcome.Lose
-        Shape.Paper to Shape.Paper -> Outcome.Draw
-        Shape.Paper to Shape.Scissor -> Outcome.Win
-        Shape.Scissor to Shape.Rock -> Outcome.Win
-        Shape.Scissor to Shape.Paper -> Outcome.Lose
-        Shape.Scissor to Shape.Scissor -> Outcome.Draw
-        else -> throw IllegalArgumentException()
+    when (assumedIndication.first) {
+        Shape.Rock -> when (assumedIndication.second) {
+            Shape.Rock -> Outcome.Draw
+            Shape.Paper -> Outcome.Win
+            Shape.Scissor -> Outcome.Lose
+        }
+        Shape.Paper -> when (assumedIndication.second) {
+            Shape.Rock -> Outcome.Lose
+            Shape.Paper -> Outcome.Draw
+            Shape.Scissor -> Outcome.Win
+        }
+        Shape.Scissor -> when (assumedIndication.second) {
+            Shape.Rock -> Outcome.Win
+            Shape.Paper -> Outcome.Lose
+            Shape.Scissor -> Outcome.Draw
+        }
     }
 
 fun assumedIndicationPoints(assumedIndication: AssumedIndication): Int =
