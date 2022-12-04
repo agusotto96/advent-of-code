@@ -20,8 +20,8 @@ fun fullOverlap(pair: ElfSectionsPair): Boolean =
 fun overlap(pair: ElfSectionsPair): Boolean =
     pair.first.any { pair.second.contains(it) }
 
-fun fullOverlapCount(elfSectionsPairs: List<ElfSectionsPair>): Int =
-    elfSectionsPairs.count(::fullOverlap)
+fun fullOverlapCount(pairs: List<ElfSectionsPair>): Int =
+    pairs.count(::fullOverlap)
 
-fun overlapCount(elfSectionsPairs: List<ElfSectionsPair>): Int =
-    elfSectionsPairs.count(::overlap)
+fun overlapCount(pairs: List<ElfSectionsPair>): Int =
+    pairs.count(::overlap)
