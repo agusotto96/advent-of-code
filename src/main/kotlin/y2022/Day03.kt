@@ -10,13 +10,9 @@ typealias Compartment = List<Item>
 
 sealed interface Item
 
-enum class Lower : Item {
-    A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
-}
+enum class Lower : Item { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z }
 
-enum class Upper : Item {
-    A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
-}
+enum class Upper : Item { A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z }
 
 fun Item(symbol: Char): Item =
     when (symbol) {

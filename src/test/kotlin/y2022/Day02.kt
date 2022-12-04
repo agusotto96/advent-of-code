@@ -10,15 +10,13 @@ internal class Day02 {
 
     @Test
     fun part1() {
-        val rawIndications = rawIndications(input)
-        val assumedIndications = assumedIndications(rawIndications)
+        val assumedIndications = assumedIndications(input)
         assertEquals(8933, assumedIndicationsPoints(assumedIndications))
     }
 
     @Test
     fun part2() {
-        val rawIndications = rawIndications(input)
-        val trueIndications = trueIndications(rawIndications)
+        val trueIndications = trueIndications(input)
         assertEquals(11998, trueIndicationsPoints(trueIndications))
     }
 
