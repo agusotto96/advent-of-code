@@ -15,10 +15,10 @@ fun elfSectionsPairs(file: File): List<ElfSectionsPair> =
         .map { it.first() to it.last() }
 
 fun fullOverlap(pair: ElfSectionsPair): Boolean =
-    pair.first.all { pair.second.contains(it) } || pair.second.all { pair.first.contains(it) }
+    pair.first.all(pair.second::contains) || pair.second.all(pair.first::contains)
 
 fun overlap(pair: ElfSectionsPair): Boolean =
-    pair.first.any { pair.second.contains(it) }
+    pair.first.any(pair.second::contains)
 
 fun fullOverlapCount(pairs: List<ElfSectionsPair>): Int =
     pairs.count(::fullOverlap)
