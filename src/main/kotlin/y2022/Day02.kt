@@ -21,10 +21,10 @@ fun rawIndications(file: File): List<RawIndication> =
         .map { it.split(" ") }
         .map { it.first().single() to it.last().single() }
 
-fun assumedIndications(indications: List<Pair<Char, Char>>): List<AssumedIndication> =
+fun assumedIndications(indications: List<RawIndication>): List<AssumedIndication> =
     indications.map { Shape(it.first) to Shape(it.second) }
 
-fun trueIndications(indications: List<Pair<Char, Char>>): List<TrueIndication> =
+fun trueIndications(indications: List<RawIndication>): List<TrueIndication> =
     indications.map { Shape(it.first) to Outcome(it.second) }
 
 fun trueIndicationPoints(trueIndication: TrueIndication): Int =
