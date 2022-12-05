@@ -29,5 +29,12 @@ fun possiblePositions(positions: List<Int>): IntRange {
 fun constantFuelCost(from: Int, to: Int): Int =
     abs(from - to)
 
-fun incrementalFuelCost(from: Int, to: Int): Int =
-    (1..abs(from - to)).sum()
+fun incrementalFuelCost(from: Int, to: Int): Int {
+    var sum = 0
+    var current = abs(from - to)
+    while (current > 0) {
+        sum += current
+        current -= 1
+    }
+    return sum
+}
