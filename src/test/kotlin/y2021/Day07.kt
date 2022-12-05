@@ -11,13 +11,13 @@ internal class Day07 {
     @Test
     fun part1() {
         val positions = positions(input)
-        assertEquals(37, bestPositionFuelCost(positions, ::constantFuelCost))
+        assertEquals(351901, bestPositionFuelCost(positions, ::constantFuelCost))
     }
 
     @Test
     fun part2() {
         val positions = positions(input)
-        assertEquals(168, bestPositionFuelCost(positions, ::incrementalFuelCost))
+        assertEquals(101079875, bestPositionFuelCost(positions, ::incrementalFuelCost))
     }
 
 }

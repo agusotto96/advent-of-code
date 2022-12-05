@@ -11,13 +11,13 @@ internal class Day04 {
     @Test
     fun part1() {
         val bingo = Bingo(input, 5)
-        assertEquals(4512, findFirstWinnerScore(bingo))
+        assertEquals(51776, findFirstWinnerScore(bingo))
     }
 
     @Test
     fun part2() {
         val bingo = Bingo(input, 5)
-        assertEquals(1924, findLastWinnerScore(bingo))
+        assertEquals(16830, findLastWinnerScore(bingo))
     }
 
 }

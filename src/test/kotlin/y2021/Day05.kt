@@ -11,13 +11,13 @@ internal class Day05 {
     @Test
     fun part1() {
         val lines = lines(input)
-        assertEquals(5, overlappingPoints(lines))
+        assertEquals(6548, overlappingPoints(lines))
     }
 
     @Test
     fun part2() {
         val lines = lines(input)
-        assertEquals(12, overlappingPoints(lines, diagonals = true))
+        assertEquals(19663, overlappingPoints(lines, diagonals = true))
     }
 
 }

@@ -11,13 +11,13 @@ internal class Day09 {
     @Test
     fun part1() {
         val heightmap = heightmap(input)
-        assertEquals(15, lowestHeightsRiskLevel(heightmap))
+        assertEquals(594, lowestHeightsRiskLevel(heightmap))
     }
 
     @Test
     fun part2() {
         val heightmap = heightmap(input)
-        assertEquals(1134, multiplyBiggestBasinSizes(heightmap, 3))
+        assertEquals(858494, multiplyBiggestBasinSizes(heightmap, 3))
     }
 
 }

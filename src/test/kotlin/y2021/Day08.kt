@@ -11,13 +11,13 @@ internal class Day08 {
     @Test
     fun part1() {
         val displays = displays(input)
-        assertEquals(26, uniqueSegmentNumberDigits(displays))
+        assertEquals(554, uniqueSegmentNumberDigits(displays))
     }
 
     @Test
     fun part2() {
         val displays = displays(input)
-        assertEquals(61229, displaysOutputSum(displays))
+        assertEquals(990964, displaysOutputSum(displays))
     }
 
 }

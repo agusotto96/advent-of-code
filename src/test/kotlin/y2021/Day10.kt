@@ -10,12 +10,12 @@ internal class Day10 {
 
     @Test
     fun part1() {
-        assertEquals(26397, fileCorruptedScore(input))
+        assertEquals(415953, fileCorruptedScore(input))
     }
 
     @Test
     fun part2() {
-        assertEquals(288957, fileUnclosedScore(input))
+        assertEquals(2292863731, fileUnclosedScore(input))
     }
 
 }

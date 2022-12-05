@@ -11,13 +11,13 @@ internal class Day01 {
     @Test
     fun part1() {
         val depths = depths(input)
-        assertEquals(7, depthIncrease(depths))
+        assertEquals(1655, depthIncrease(depths))
     }
 
     @Test
     fun part2() {
         val depths = depths(input, 3)
-        assertEquals(5, depthIncrease(depths))
+        assertEquals(1683, depthIncrease(depths))
     }
 
 }

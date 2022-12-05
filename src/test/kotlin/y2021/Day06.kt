@@ -11,13 +11,13 @@ internal class Day06 {
     @Test
     fun part1() {
         val population = population(input)
-        assertEquals(5934, simulateGrowth(population, 80))
+        assertEquals(391888, simulateGrowth(population, 80))
     }
 
     @Test
     fun part2() {
         val population = population(input)
-        assertEquals(26984457539, simulateGrowth(population, 256))
+        assertEquals(1754597645339, simulateGrowth(population, 256))
     }
 
 }

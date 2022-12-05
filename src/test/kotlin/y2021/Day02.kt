@@ -11,13 +11,13 @@ internal class Day02 {
     @Test
     fun part1() {
         val instructions = instructions(input)
-        assertEquals(150, simpleCourse(instructions))
+        assertEquals(1670340, simpleCourse(instructions))
     }
 
     @Test
     fun part2() {
         val instructions = instructions(input)
-        assertEquals(900, complexCourse(instructions))
+        assertEquals(1954293920, complexCourse(instructions))
     }
 
 }
