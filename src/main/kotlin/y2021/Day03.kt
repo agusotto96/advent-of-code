@@ -34,9 +34,8 @@ fun co2ScrubberRating(report: List<String>): String {
     throw Exception()
 }
 
-fun report(file: File): List<String> {
-    return file.readLines()
-}
+fun report(file: File): List<String> =
+    file.readLines()
 
 fun powerConsumption(report: List<String>): Int {
     val gammaRate = gammaRate(report)
@@ -59,8 +58,7 @@ fun gammaRate(report: List<String>): String {
     return gammaRate.concatToString()
 }
 
-fun epsilonRate(report: List<String>): String {
-    return gammaRate(report)
-        .map { number -> if (number == '0') '1' else '0' }
+fun epsilonRate(report: List<String>): String =
+    gammaRate(report)
+        .map { if (it == '0') '1' else '0' }
         .joinToString("")
-}

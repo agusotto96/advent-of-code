@@ -8,10 +8,16 @@ data class Bingo(val numbers: List<Int>, val boards: List<Board>)
 
 fun Bingo(file: File, boardSize: Int): Bingo {
     val lines = file.readLines()
-    val numbers = lines.first().split(",").map(String::toInt)
-    val boards = lines.asSequence().drop(1).filter(String::isNotBlank)
+    val numbers = lines.first()
+        .split(",")
+        .map(String::toInt)
+    val boards = lines.asSequence()
+        .drop(1)
+        .filter(String::isNotBlank)
         .map { it.split(" ").filter(String::isNotBlank).map(String::toInt) }
-        .chunked(boardSize).map(::board).toList()
+        .chunked(boardSize)
+        .map(::board)
+        .toList()
     return Bingo(numbers, boards)
 }
 
@@ -63,6 +69,5 @@ fun findLastWinnerScore(bingo: Bingo): Int? {
     return scoresByWinner[lastWinner]
 }
 
-fun score(number: Int, numbers: Set<Int>, board: Board): Int {
-    return number * (board.flatten().toSet() - numbers).sum()
-}
+fun score(number: Int, numbers: Set<Int>, board: Board): Int =
+    number * (board.flatten().toSet() - numbers).sum()

@@ -6,21 +6,24 @@ typealias Heightmap = List<List<Int>>
 
 typealias Location = Pair<Int, Int>
 
-fun heightmap(file: File): Heightmap {
-    return file.readLines().map { it.map(Char::digitToInt) }
-}
+fun heightmap(file: File): Heightmap =
+    file.readLines().map { it.map(Char::digitToInt) }
 
-fun lowestHeightsRiskLevel(heightmap: Heightmap): Int {
-    return lowestHeights(heightmap).map(::riskLevel).sum()
-}
+fun lowestHeightsRiskLevel(heightmap: Heightmap): Int =
+    lowestHeights(heightmap)
+        .map(::riskLevel)
+        .sum()
 
-fun multiplyBiggestBasinSizes(heightmap: Heightmap, times: Int): Int {
-    return basinSizes(heightmap).sorted().takeLast(times).reduce(Int::times)
-}
+fun multiplyBiggestBasinSizes(heightmap: Heightmap, times: Int): Int =
+    basinSizes(heightmap)
+        .sorted()
+        .takeLast(times)
+        .reduce(Int::times)
 
-fun basinSizes(heightmap: Heightmap): List<Int> {
-    return lowestLocations(heightmap).map { basin(heightmap, it) }.map(Set<Location>::size)
-}
+fun basinSizes(heightmap: Heightmap): List<Int> =
+    lowestLocations(heightmap)
+        .map { basin(heightmap, it) }
+        .map(Set<Location>::size)
 
 fun basin(heightmap: Heightmap, lowest: Location, visited: MutableSet<Location> = mutableSetOf(lowest)): Set<Location> {
     val up = up(lowest)
@@ -50,13 +53,11 @@ fun basin(heightmap: Heightmap, lowest: Location, visited: MutableSet<Location> 
     return visited
 }
 
-fun lowestHeights(heightmap: Heightmap): List<Int> {
-    return lowestLocations(heightmap).map { heightmap[it.first][it.second] }
-}
+fun lowestHeights(heightmap: Heightmap): List<Int> =
+    lowestLocations(heightmap).map { heightmap[it.first][it.second] }
 
-fun riskLevel(height: Int): Int {
-    return height + 1
-}
+fun riskLevel(height: Int): Int =
+    height + 1
 
 fun lowestLocations(heightmap: Heightmap): List<Location> {
     val lowestLocations = mutableListOf<Location>()
@@ -78,22 +79,17 @@ fun lowestLocations(heightmap: Heightmap): List<Location> {
     return lowestLocations
 }
 
-private fun height(heightmap: Heightmap, location: Location): Int? {
-    return heightmap.getOrNull(location.first)?.getOrNull(location.second)
-}
+private fun height(heightmap: Heightmap, location: Location): Int? =
+    heightmap.getOrNull(location.first)?.getOrNull(location.second)
 
-private fun up(location: Location): Location {
-    return location.first - 1 to location.second
-}
+private fun up(location: Location): Location =
+    location.first - 1 to location.second
 
-private fun down(location: Location): Location {
-    return location.first + 1 to location.second
-}
+private fun down(location: Location): Location =
+    location.first + 1 to location.second
 
-private fun left(location: Location): Location {
-    return location.first to location.second - 1
-}
+private fun left(location: Location): Location =
+    location.first to location.second - 1
 
-private fun right(location: Location): Location {
-    return location.first to location.second + 1
-}
+private fun right(location: Location): Location =
+    location.first to location.second + 1

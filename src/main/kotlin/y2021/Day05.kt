@@ -6,19 +6,17 @@ import kotlin.math.max
 import kotlin.math.min
 
 data class Point(val x: Int, val y: Int)
+
 data class Line(val start: Point, val end: Point)
 
-fun isVertical(line: Line): Boolean {
-    return line.start.x == line.end.x
-}
+fun isVertical(line: Line): Boolean =
+    line.start.x == line.end.x
 
-fun isHorizontal(line: Line): Boolean {
-    return line.start.y == line.end.y
-}
+fun isHorizontal(line: Line): Boolean =
+    line.start.y == line.end.y
 
-fun isDiagonal(line: Line): Boolean {
-    return abs(abs(line.start.x) - abs(line.end.x)) == abs(abs(line.start.y) - abs(line.end.y))
-}
+fun isDiagonal(line: Line): Boolean =
+    abs(abs(line.start.x) - abs(line.end.x)) == abs(abs(line.start.y) - abs(line.end.y))
 
 fun overlappingPoints(lines: List<Line>, diagonals: Boolean = false): Int {
     val points = mutableSetOf<Point>()
@@ -33,14 +31,13 @@ fun overlappingPoints(lines: List<Line>, diagonals: Boolean = false): Int {
     return overlappingPoints.size
 }
 
-fun path(line: Line, diagonals: Boolean): List<Point> {
-    return when {
+fun path(line: Line, diagonals: Boolean): List<Point> =
+    when {
         isHorizontal(line) -> horizontalPath(line)
         isVertical(line) -> verticalPath(line)
         isDiagonal(line) && diagonals -> diagonalPath(line)
         else -> emptyList()
     }
-}
 
 fun horizontalPath(line: Line): List<Point> {
     val y = line.start.y
@@ -62,9 +59,8 @@ fun diagonalPath(line: Line): List<Point> {
     return xPath.zip(yPath).map { pair -> Point(pair.first, pair.second) }
 }
 
-fun lines(file: File): List<Line> {
-    return file.readLines().map(::Line)
-}
+fun lines(file: File): List<Line> =
+    file.readLines().map(::Line)
 
 fun Line(input: String): Line {
     val points = input.split(" -> ").map(::Point)

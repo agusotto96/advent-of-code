@@ -12,9 +12,8 @@ data class Segments(val segments: Set<Char>) {
     operator fun minus(other: Segments) = Segments(segments - other.segments)
 }
 
-fun displays(file: File): List<Display> {
-    return file.readLines().map(::Display)
-}
+fun displays(file: File): List<Display> =
+    file.readLines().map(::Display)
 
 fun Display(input: String): Display {
     val splitInput = input.split(" | ")
@@ -23,13 +22,11 @@ fun Display(input: String): Display {
     return Display(segments, digits)
 }
 
-fun uniqueSegmentNumberDigits(entries: List<Display>): Int {
-    return entries.flatMap(Display::digits).map(Segments::size).count(uniquePatternSizes::contains)
-}
+fun uniqueSegmentNumberDigits(entries: List<Display>): Int =
+    entries.flatMap(Display::digits).map(Segments::size).count(uniquePatternSizes::contains)
 
-fun displaysOutputSum(displays: List<Display>): Int {
-    return displays.map(::output).sum()
-}
+fun displaysOutputSum(displays: List<Display>): Int =
+    displays.map(::output).sum()
 
 fun output(display: Display): Int {
     val digitsByPattern = digitsByPattern(display.patterns)

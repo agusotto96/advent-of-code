@@ -2,13 +2,11 @@ package y2021
 
 import java.io.File
 
-fun depths(file: File): List<Int> {
-    return file.readLines().map(String::toInt)
-}
+fun depths(file: File): List<Int> =
+    file.readLines().map(String::toInt)
 
-fun depths(file: File, windowSize: Int): List<Int> {
-    return depths(file).windowed(windowSize).map(List<Int>::sum)
-}
+fun depths(file: File, windowSize: Int): List<Int> =
+    depths(file).windowed(windowSize).map(List<Int>::sum)
 
 fun depthIncrease(depths: List<Int>): Int {
     var increased = 0

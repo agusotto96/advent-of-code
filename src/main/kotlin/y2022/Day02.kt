@@ -31,7 +31,7 @@ fun Shape(symbol: Char): Shape =
         'X' -> Shape.Rock
         'Y' -> Shape.Paper
         'Z' -> Shape.Scissor
-        else -> throw IllegalArgumentException()
+        else -> throw Exception()
     }
 
 fun trueIndications(file: File): List<TrueIndication> =
@@ -45,7 +45,7 @@ fun Outcome(symbol: Char): Outcome =
         'X' -> Outcome.Lose
         'Y' -> Outcome.Draw
         'Z' -> Outcome.Win
-        else -> throw IllegalArgumentException()
+        else -> throw Exception()
     }
 
 fun assumedIndicationsPoints(assumedIndications: List<AssumedIndication>): Int =

@@ -68,7 +68,7 @@ fun Item(symbol: Char): Item =
         'X' -> Upper.X
         'Y' -> Upper.Y
         'Z' -> Upper.Z
-        else -> throw IllegalArgumentException()
+        else -> throw Exception()
     }
 
 fun rucksacks(file: File): List<Rucksack> =

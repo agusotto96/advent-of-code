@@ -2,9 +2,10 @@ package y2021
 
 import java.io.File
 
-fun instructions(file: File): List<Pair<String, Int>> {
-    return file.readLines().map { it.split(' ') }.map { it[0] to it[1].toInt() }
-}
+fun instructions(file: File): List<Pair<String, Int>> =
+    file.readLines()
+        .map { it.split(' ') }
+        .map { it[0] to it[1].toInt() }
 
 fun simpleCourse(instructions: List<Pair<String, Int>>): Int {
     var horizontalPosition = 0
@@ -29,7 +30,6 @@ fun complexCourse(instructions: List<Pair<String, Int>>): Int {
                 horizontalPosition += instruction.second
                 depth += instruction.second * aim
             }
-
             "down" -> aim += instruction.second
             "up" -> aim -= instruction.second
         }
