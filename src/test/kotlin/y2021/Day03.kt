@@ -20,5 +20,4 @@ internal class Day03 {
         assertEquals(6775520, lifeSupportRating(report))
     }
 
-
 }
