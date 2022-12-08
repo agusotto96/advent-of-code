@@ -1,8 +1,8 @@
 package y2022
 
-// Find all the directories with a total size of at most 100000, then calculate the sum of their total sizes.
-
 typealias Directory = MutableList<String>
+
+fun List<String>.path(): String = joinToString(".")
 
 fun asd(outputLines: List<OutputLine>, maxSize: Int): Int {
     val directory: Directory = mutableListOf()
@@ -15,17 +15,19 @@ fun asd(outputLines: List<OutputLine>, maxSize: Int): Int {
                 when (val argument = outputLine.argument) {
                     is ChangeDirectoryArgument.Directory -> {
                         directory.add(argument.directoryName)
-                        directories.add(directory.joinToString("."))
+                        directories.add(directory.path())
                     }
                     is ChangeDirectoryArgument.Previous -> directory.removeLast()
                 }
             }
             is OutputLine.DataFile -> {
-                directoryFilesSize[directory.joinToString(".")] = (directoryFilesSize[directory.joinToString(".")] ?: 0) + outputLine.size
+                val directoryPath = directory.path()
+                directoryFilesSize[directoryPath] = (directoryFilesSize[directoryPath] ?: 0) + outputLine.size
             }
             is OutputLine.Directory -> {
-                val nestedDirectory = directory + outputLine.name
-                nestedDirectories[directory.joinToString(".")] = (nestedDirectories[directory.joinToString(".")] ?: emptySet()) + nestedDirectory.joinToString(".")
+                val directoryPath = directory.path()
+                val nestedDirectoryPath = (directory + outputLine.name).path()
+                nestedDirectories[directoryPath] = (nestedDirectories[directoryPath] ?: emptySet()) + nestedDirectoryPath
             }
             is OutputLine.ListDirectory -> {}
         }
