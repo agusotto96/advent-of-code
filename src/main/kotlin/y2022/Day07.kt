@@ -4,10 +4,6 @@ package y2022
 
 typealias Directory = MutableList<String>
 
-fun Directory.str(): String = joinToString(".")
-
-fun List<String>.str2(): String = joinToString(".")
-
 fun asd(outputLines: List<OutputLine>, maxSize: Int): Int {
     val directory: Directory = mutableListOf()
     val directories = mutableSetOf<String>()
@@ -19,16 +15,17 @@ fun asd(outputLines: List<OutputLine>, maxSize: Int): Int {
                 when (val argument = outputLine.argument) {
                     is ChangeDirectoryArgument.Directory -> {
                         directory.add(argument.directoryName)
-                        directories.add(directory.str())
+                        directories.add(directory.joinToString("."))
                     }
                     is ChangeDirectoryArgument.Previous -> directory.removeLast()
                 }
             }
             is OutputLine.DataFile -> {
-                directoryFilesSize[directory.str()] = (directoryFilesSize[directory.str()] ?: 0) + outputLine.size
+                directoryFilesSize[directory.joinToString(".")] = (directoryFilesSize[directory.joinToString(".")] ?: 0) + outputLine.size
             }
             is OutputLine.Directory -> {
-                nestedDirectories[directory.str()] = (nestedDirectories[directory.str()] ?: emptySet()) + ((directory + outputLine.name).str2())
+                val nestedDirectory = directory + outputLine.name
+                nestedDirectories[directory.joinToString(".")] = (nestedDirectories[directory.joinToString(".")] ?: emptySet()) + nestedDirectory.joinToString(".")
             }
             is OutputLine.ListDirectory -> {}
         }
