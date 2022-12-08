@@ -11,7 +11,7 @@ internal class Day07 {
     @Test
     fun part1() {
         val outputLines = outputLines(input)
-        assertEquals(95437, asd(outputLines, 100000))
+        assertEquals(1667443, asd(outputLines, 100000))
     }
 
 }
