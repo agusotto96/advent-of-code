@@ -12,10 +12,7 @@ fun countVisibleTrees(treeGrid: List<List<Int>>): Int {
         for (j in innerTreeRange) {
             val tree = treeGrid[i][j]
             val (upTrees, downTrees, leftTrees, rightTrees) = directTrees(i, j, treeGrid)
-            if (upTrees.all { it < tree }
-                || downTrees.all { it < tree }
-                || leftTrees.all { it < tree }
-                || rightTrees.all { it < tree }) {
+            if (isVisible(tree, upTrees, downTrees, leftTrees, rightTrees)) {
                 count++
             }
         }
@@ -28,13 +25,7 @@ fun maxScenicScore(treeGrid: List<List<Int>>): Int {
     val treeRange = treeGrid.indices
     for (i in treeRange) {
         for (j in treeRange) {
-            val tree = treeGrid[i][j]
-            val (upTrees, downTrees, leftTrees, rightTrees) = directTrees(i, j, treeGrid)
-            val upViewingDistance = viewingDistance(tree, upTrees)
-            val downViewingDistance = viewingDistance(tree, downTrees)
-            val leftViewingDistance = viewingDistance(tree, leftTrees)
-            val rightViewingDistance = viewingDistance(tree, rightTrees)
-            val scenicScore = upViewingDistance * downViewingDistance * leftViewingDistance * rightViewingDistance
+            val scenicScore = scenicScore(i, j, treeGrid)
             if (scenicScore > maxScore) {
                 maxScore = scenicScore
             }
@@ -49,6 +40,22 @@ fun directTrees(i: Int, j: Int, treeGrid: List<List<Int>>): List<List<Int>> {
     val leftTrees = treeGrid[i].subList(0, j).asReversed()
     val rightTrees = treeGrid[i].subList(j + 1, treeGrid.size)
     return listOf(upTrees, downTrees, leftTrees, rightTrees)
+}
+
+fun isVisible(tree: Int, upTrees: List<Int>, downTrees: List<Int>, leftTrees: List<Int>, rightTrees: List<Int>): Boolean =
+    upTrees.all { it < tree }
+            || downTrees.all { it < tree }
+            || leftTrees.all { it < tree }
+            || rightTrees.all { it < tree }
+
+fun scenicScore(i: Int, j: Int, treeGrid: List<List<Int>>): Int {
+    val tree = treeGrid[i][j]
+    val (upTrees, downTrees, leftTrees, rightTrees) = directTrees(i, j, treeGrid)
+    val upViewingDistance = viewingDistance(tree, upTrees)
+    val downViewingDistance = viewingDistance(tree, downTrees)
+    val leftViewingDistance = viewingDistance(tree, leftTrees)
+    val rightViewingDistance = viewingDistance(tree, rightTrees)
+    return upViewingDistance * downViewingDistance * leftViewingDistance * rightViewingDistance
 }
 
 fun viewingDistance(tree: Int, directTrees: List<Int>): Int {
