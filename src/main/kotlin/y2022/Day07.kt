@@ -1,55 +1,38 @@
 package y2022
 
-typealias Directory = MutableList<String>
+import java.io.File
 
-fun List<String>.path(): String = joinToString(".")
-
-fun asd(outputLines: List<OutputLine>, maxSize: Int): Int {
-    val directory: Directory = mutableListOf()
-    val directories = mutableSetOf<String>()
-    val directoryFilesSize = mutableMapOf<String, Int>()
-    val nestedDirectories = mutableMapOf<String, Set<String>>()
+fun directoriesSize(outputLines: List<OutputLine>): Map<List<String>, Int> {
+    val directory = mutableListOf<String>()
+    val directoriesSize = mutableMapOf<List<String>, Int>()
     for (outputLine in outputLines) {
         when (outputLine) {
             is OutputLine.ChangeDirectory -> {
                 when (val argument = outputLine.argument) {
-                    is ChangeDirectoryArgument.Directory -> {
-                        directory.add(argument.directoryName)
-                        directories.add(directory.path())
-                    }
+                    is ChangeDirectoryArgument.Directory -> directory.add(argument.directoryName)
                     is ChangeDirectoryArgument.Previous -> directory.removeLast()
                 }
             }
             is OutputLine.DataFile -> {
-                val directoryPath = directory.path()
-                directoryFilesSize[directoryPath] = (directoryFilesSize[directoryPath] ?: 0) + outputLine.size
+                (1..directory.size)
+                    .map(directory::take)
+                    .forEach { directoriesSize[it] = (directoriesSize[it] ?: 0) + outputLine.size }
             }
-            is OutputLine.Directory -> {
-                val directoryPath = directory.path()
-                val nestedDirectoryPath = (directory + outputLine.name).path()
-                nestedDirectories[directoryPath] = (nestedDirectories[directoryPath] ?: emptySet()) + nestedDirectoryPath
-            }
+            is OutputLine.Directory -> {}
             is OutputLine.ListDirectory -> {}
         }
     }
-    return directories
-        .map { findAllSubdirectories(it, nestedDirectories) + it }
-        .map { dirs -> dirs.sumOf { dir -> directoryFilesSize[dir] ?: 0 } }
+    return directoriesSize
+}
+
+fun directoriesSizeSum(outputLines: List<OutputLine>, maxSize: Int): Int =
+    outputLines
+        .let(::directoriesSize)
+        .values
         .filter { it <= maxSize }
         .sum()
-}
 
-fun findAllSubdirectories(directory: String, nestedDirectories: Map<String, Set<String>>): Set<String> {
-    val subdirectories = nestedDirectories[directory]
-    if (subdirectories != null) {
-        for (subdirectory in subdirectories) {
-            return subdirectories + findAllSubdirectories(subdirectory, nestedDirectories)
-        }
-    }
-    return emptySet()
-}
-
-fun outputLines(file: java.io.File): List<OutputLine> {
+fun outputLines(file: File): List<OutputLine> {
     val outputLines = mutableListOf<OutputLine>()
     for (line in file.readLines()) {
         if (line.startsWith("$")) {
