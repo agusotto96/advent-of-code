@@ -14,4 +14,10 @@ internal class Day07 {
         assertEquals(1667443, directoriesSizeSum(outputLines, 100000))
     }
 
+    @Test
+    fun part2() {
+        val outputLines = outputLines(input)
+        assertEquals(8998590, smallestDeletableDirectorySize(outputLines, 70000000, 30000000))
+    }
+
 }

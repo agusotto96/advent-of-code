@@ -25,6 +25,16 @@ fun directoriesSize(outputLines: List<OutputLine>): Map<List<String>, Int> {
     return directoriesSize
 }
 
+fun smallestDeletableDirectorySize(outputLines: List<OutputLine>, totalSpace: Int, requiredSpace: Int): Int {
+    val directoriesSize = directoriesSize(outputLines)
+    val usedSpace = directoriesSize.values.max()
+    val freeSpace = totalSpace - usedSpace
+    return directoriesSize
+        .values
+        .filter { it >= (requiredSpace - freeSpace) }
+        .minOf { it }
+}
+
 fun directoriesSizeSum(outputLines: List<OutputLine>, maxSize: Int): Int =
     outputLines
         .let(::directoriesSize)
