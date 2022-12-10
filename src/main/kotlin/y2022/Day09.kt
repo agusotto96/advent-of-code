@@ -13,7 +13,6 @@ fun countTailPositions(motions: List<Motion>): Int {
     val positions = mutableSetOf<Position>()
     var head = Position(0, 0)
     var tail = Position(0, 0)
-    positions.add(tail)
     for (motion in motions) {
         repeat(motion.step) {
             head = when (motion.direction) {
