@@ -11,11 +11,13 @@ internal class Day09 {
     @Test
     fun part1() {
         val motions = motions(input)
-        assertEquals(6642, countTailPositions(motions))
+        assertEquals(6642, countTailPositions(motions, 2))
     }
 
     @Test
     fun part2() {
+        val motions = motions(input)
+        assertEquals(2765, countTailPositions(motions, 10))
     }
 
 }
