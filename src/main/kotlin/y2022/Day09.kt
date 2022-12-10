@@ -7,54 +7,28 @@ enum class Direction { Up, Down, Left, Right }
 
 data class Motion(val direction: Direction, val step: Int)
 
-data class Position(val x: Int, val y: Int)
+data class Position(var x: Int, var y: Int)
 
 fun countTailPositions(motions: List<Motion>): Int {
     val positions = mutableSetOf<Position>()
-    var head = Position(0, 0)
-    var tail = Position(0, 0)
+    val head = Position(0, 0)
+    val tail = Position(0, 0)
     for (motion in motions) {
         repeat(motion.step) {
-            head = when (motion.direction) {
-                Direction.Up -> head.copy(y = head.y + 1)
-                Direction.Down -> head.copy(y = head.y - 1)
-                Direction.Left -> head.copy(x = head.x - 1)
-                Direction.Right -> head.copy(x = head.x + 1)
+            when (motion.direction) {
+                Direction.Up -> head.y++
+                Direction.Down -> head.y--
+                Direction.Left -> head.x--
+                Direction.Right -> head.x++
             }
             val xDistance = head.x - tail.x
             val yDistance = head.y - tail.y
-            if (abs(xDistance) + abs(yDistance) > 2) {
-                if (xDistance > 0) {
-                    tail = tail.copy(x = tail.x + 1)
-                }
-                if (xDistance < 0) {
-                    tail = tail.copy(x = tail.x - 1)
-                }
-                if (yDistance > 0) {
-                    tail = tail.copy(y = tail.y + 1)
-                }
-                if (yDistance < 0) {
-                    tail = tail.copy(y = tail.y - 1)
-                }
-            } else {
-                if (abs(xDistance) > 1) {
-                    if (xDistance > 0) {
-                        tail = tail.copy(x = tail.x + 1)
-                    }
-                    if (xDistance < 0) {
-                        tail = tail.copy(x = tail.x - 1)
-                    }
-                }
-                if (abs(yDistance) > 1) {
-                    if (yDistance > 0) {
-                        tail = tail.copy(y = tail.y + 1)
-                    }
-                    if (yDistance < 0) {
-                        tail = tail.copy(y = tail.y - 1)
-                    }
-                }
-            }
-            positions.add(tail)
+            val absoluteDistance = abs(xDistance) + abs(yDistance)
+            if (xDistance == 2 || (xDistance == 1 && absoluteDistance == 3)) tail.x++
+            if (yDistance == 2 || (yDistance == 1 && absoluteDistance == 3)) tail.y++
+            if (xDistance == -2 || (xDistance == -1 && absoluteDistance == 3)) tail.x--
+            if (yDistance == -2 || (yDistance == -1 && absoluteDistance == 3)) tail.y--
+            positions.add(tail.copy())
         }
     }
     return positions.count()
