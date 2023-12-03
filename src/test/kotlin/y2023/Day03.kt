@@ -18,8 +18,8 @@ internal class Day03 {
     @Test
     fun part2() {
         val engineSchematic = engineParts(input)
-        val gearRatios = gearRatios(engineSchematic).sum()
-        assertEquals(79842967, gearRatios)
+        val gearRatiosSum = gearRatios(engineSchematic).sum()
+        assertEquals(79842967, gearRatiosSum)
     }
 
 }
