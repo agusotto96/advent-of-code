@@ -2,6 +2,12 @@ package y2023
 
 import java.io.File
 
+data class Game(val id: Int, val sets: List<Map<Color, Int>>)
+
+enum class Color {
+    Red, Green, Blue
+}
+
 fun games(file: File): List<Game> {
     val games = mutableListOf<Game>()
     for (line in file.readLines()) {
@@ -14,19 +20,21 @@ fun games(file: File): List<Game> {
                 val (count, color) = cube.split(" ")
                 cubes[Color(color)!!] = count.toInt()
             }
-            sets.add(cubes)
+            sets += cubes
         }
         val game = Game(id.toInt(), sets)
-        games.add(game)
+        games += game
     }
     return games
 }
 
-fun possibleGamesIdSum(games: List<Game>, bag: Map<Color, Int>): Int =
-    games
-        .filter { isPossibleGame(it, bag) }
-        .sumOf(Game::id)
-
+fun Color(color: String): Color? =
+    when (color) {
+        "red" -> Color.Red
+        "green" -> Color.Green
+        "blue" -> Color.Blue
+        else -> null
+    }
 
 fun isPossibleGame(game: Game, bag: Map<Color, Int>): Boolean {
     for (set in game.sets) {
@@ -39,9 +47,6 @@ fun isPossibleGame(game: Game, bag: Map<Color, Int>): Boolean {
     return true
 }
 
-fun minimumBagPowerSum(games: List<Game>): Int =
-    games.map(::minimumBagPower).sum()
-
 fun minimumBagPower(game: Game): Int {
     val bag = mutableMapOf<Color, Int>()
     for (set in game.sets) {
@@ -53,17 +58,3 @@ fun minimumBagPower(game: Game): Int {
     }
     return bag.values.reduce { acc, c -> acc * c }
 }
-
-data class Game(val id: Int, val sets: List<Map<Color, Int>>)
-
-enum class Color {
-    Red, Green, Blue
-}
-
-fun Color(color: String): Color? =
-    when (color) {
-        "red" -> Color.Red
-        "green" -> Color.Green
-        "blue" -> Color.Blue
-        else -> null
-    }

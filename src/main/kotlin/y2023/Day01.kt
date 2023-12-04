@@ -2,10 +2,8 @@ package y2023
 
 import java.io.File
 
-fun calibrations(file: File): List<String> = file.readLines()
-
-fun calibrationsSum(calibrations: List<String>, digitsBySymbol: Map<String, Int>): Int =
-    calibrations.sumOf { calibrationValue(it, digitsBySymbol) }
+fun calibrations(file: File): List<String> =
+    file.readLines()
 
 fun calibrationValue(calibration: String, digitsBySymbol: Map<String, Int>): Int {
     val symbolSizes = digitsBySymbol.keys.map(String::length).toSortedSet()
@@ -16,7 +14,7 @@ fun calibrationValue(calibration: String, digitsBySymbol: Map<String, Int>): Int
                 val symbol = calibration.substring(i, i + s)
                 val digit = digitsBySymbol[symbol]
                 if (digit != null) {
-                    digits.add(digit)
+                    digits += digit
                 }
             }
         }

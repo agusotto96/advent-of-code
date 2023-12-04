@@ -16,14 +16,14 @@ internal class Day02 {
             Color.Blue to 14,
         )
         val games = games(input)
-        val possibleGamesIdSum = possibleGamesIdSum(games, bag)
+        val possibleGamesIdSum = games.filter { isPossibleGame(it, bag) }.sumOf(Game::id)
         assertEquals(2256, possibleGamesIdSum)
     }
 
     @Test
     fun part2() {
         val games = games(input)
-        val minimumBagPowerSum = minimumBagPowerSum(games)
+        val minimumBagPowerSum = games.map(::minimumBagPower).sum()
         assertEquals(74229, minimumBagPowerSum)
     }
 

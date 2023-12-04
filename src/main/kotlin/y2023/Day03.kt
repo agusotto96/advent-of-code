@@ -16,6 +16,14 @@ sealed interface EnginePart {
 fun engineParts(file: File): List<List<EnginePart>> =
     file.readLines().map { it.map(::EnginePart) }
 
+fun EnginePart(char: Char): EnginePart =
+    when {
+        char.isDigit() -> EnginePart.Digit(char.digitToInt())
+        char == '.' -> EnginePart.Period
+        char == '*' -> EnginePart.Symbol.Gear
+        else -> EnginePart.Symbol.Normal
+    }
+
 fun gearRatios(engineParts: List<List<EnginePart>>): List<Int> {
     val gearRatios = mutableListOf<Int>()
     val partNumberPositions = partNumberPositions(engineParts)
@@ -27,7 +35,7 @@ fun gearRatios(engineParts: List<List<EnginePart>>): List<Int> {
             .map { (number, _) -> number }
         if (neighborPartNumbers.size == 2) {
             val gearRatio = neighborPartNumbers.first().toInt() * neighborPartNumbers.last().toInt()
-            gearRatios.add(gearRatio)
+            gearRatios += gearRatio
         }
     }
     return gearRatios
@@ -54,12 +62,12 @@ fun numberPositions(engineParts: List<List<EnginePart>>): List<Pair<Int, List<Po
         for (x in engineParts[y].indices) {
             val enginePart = engineParts[y][x]
             if (enginePart is EnginePart.Digit) {
-                digits.add(enginePart)
-                positions.add(x to y)
+                digits += enginePart
+                positions += x to y
             } else {
                 if (digits.isNotEmpty()) {
                     val number = digitsToInt(digits)
-                    numberPositions.add(number to positions)
+                    numberPositions += number to positions
                     digits = mutableListOf()
                     positions = mutableListOf()
                 }
@@ -67,7 +75,7 @@ fun numberPositions(engineParts: List<List<EnginePart>>): List<Pair<Int, List<Po
         }
         if (digits.isNotEmpty()) {
             val number = digitsToInt(digits)
-            numberPositions.add(number to positions)
+            numberPositions += number to positions
         }
     }
     return numberPositions
@@ -87,11 +95,3 @@ fun mooreNeighbors(x: Int, y: Int): List<Position> =
         x + 1 to y,
         x + 1 to y + 1
     )
-
-fun EnginePart(char: Char): EnginePart =
-    when {
-        char.isDigit() -> EnginePart.Digit(char.digitToInt())
-        char == '.' -> EnginePart.Period
-        char == '*' -> EnginePart.Symbol.Gear
-        else -> EnginePart.Symbol.Normal
-    }

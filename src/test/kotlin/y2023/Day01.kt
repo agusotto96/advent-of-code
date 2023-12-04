@@ -10,7 +10,7 @@ internal class Day01 {
 
     @Test
     fun part1() {
-        val digitsByText = mapOf(
+        val digitsBySymbol = mapOf(
             "1" to 1,
             "2" to 2,
             "3" to 3,
@@ -22,13 +22,13 @@ internal class Day01 {
             "9" to 9,
         )
         val calibrations = calibrations(input)
-        val calibrationsSum = calibrationsSum(calibrations, digitsByText)
+        val calibrationsSum = calibrations.sumOf { calibrationValue(it, digitsBySymbol) }
         assertEquals(54331, calibrationsSum)
     }
 
     @Test
     fun part2() {
-        val digitsByText = mapOf(
+        val digitsBySymbol = mapOf(
             "1" to 1,
             "2" to 2,
             "3" to 3,
@@ -49,7 +49,7 @@ internal class Day01 {
             "nine" to 9,
         )
         val calibrations = calibrations(input)
-        val calibrationsSum = calibrationsSum(calibrations, digitsByText)
+        val calibrationsSum = calibrations.sumOf { calibrationValue(it, digitsBySymbol) }
         assertEquals(54518, calibrationsSum)
     }
 
