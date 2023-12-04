@@ -34,17 +34,17 @@ fun EngineSchematic(file: File): EngineSchematic {
     return EngineSchematic(symbolPositions, gearPositions, numberPositions)
 }
 
-fun partNumbersSum(engineSchematic: EngineSchematic): Int {
+fun partNumbers(engineSchematic: EngineSchematic): List<Int> {
     val (symbolPositions, _, numberPositions) = engineSchematic
     val symbolNeighborPositions = symbolPositions
         .flatMap { (x, y) -> mooreNeighbors(x, y) }
         .toSet()
     return numberPositions
         .filter { (_, positions) -> positions.any { it in symbolNeighborPositions } }
-        .sumOf { (number, _) -> number }
+        .map { (number, _) -> number }
 }
 
-fun gearRatiosSum(engineSchematic: EngineSchematic): Int {
+fun gearRatios(engineSchematic: EngineSchematic): List<Int> {
     val (_, gearPositions, numberPositions) = engineSchematic
     val numbersByPosition = numberPositions
         .flatMapIndexed { index, (number, positions) -> positions.map { position -> position to (number to index) } }
@@ -55,7 +55,7 @@ fun gearRatiosSum(engineSchematic: EngineSchematic): Int {
         .map { it.mapNotNull(numbersByPosition::get).distinctBy { (_, index) -> index }.map { (number, _) -> number } }
         .filter { it.size == 2 }
         .map { it.first() * it.last() }
-        .sum()
+        .toList()
 }
 
 fun numberPositions(digitPositions: List<Pair<Int, Position>>): List<Pair<Int, List<Position>>> {
