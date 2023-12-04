@@ -4,85 +4,81 @@ import java.io.File
 
 typealias Position = Pair<Int, Int>
 
-sealed interface EnginePart {
-    data class Digit(val value: Int) : EnginePart
-    object Period : EnginePart
-    sealed interface Symbol : EnginePart {
-        object Gear : Symbol
-        object Normal : Symbol
-    }
-}
+data class EngineSchematic(
+    val symbolPositions: List<Position>,
+    val gearPositions: List<Position>,
+    val numberPositions: List<Pair<Int, Set<Position>>>,
+)
 
-fun engineParts(file: File): List<List<EnginePart>> =
-    file.readLines().map { it.map(::EnginePart) }
-
-fun EnginePart(char: Char): EnginePart =
-    when {
-        char.isDigit() -> EnginePart.Digit(char.digitToInt())
-        char == '.' -> EnginePart.Period
-        char == '*' -> EnginePart.Symbol.Gear
-        else -> EnginePart.Symbol.Normal
-    }
-
-fun gearRatios(engineParts: List<List<EnginePart>>): List<Int> {
-    val gearRatios = mutableListOf<Int>()
-    val partNumberPositions = partNumberPositions(engineParts)
-    val gearPositions = enginePartPositions<EnginePart.Symbol.Gear>(engineParts)
-    for ((x, y) in gearPositions) {
-        val gearNeighbors = mooreNeighbors(x, y)
-        val neighborPartNumbers = partNumberPositions
-            .filter { (_, positions) -> positions.any { it in gearNeighbors } }
-            .map { (number, _) -> number }
-        if (neighborPartNumbers.size == 2) {
-            val gearRatio = neighborPartNumbers.first().toInt() * neighborPartNumbers.last().toInt()
-            gearRatios += gearRatio
-        }
-    }
-    return gearRatios
-}
-
-fun partNumberPositions(engineParts: List<List<EnginePart>>): List<Pair<Int, List<Position>>> {
-    val symbolNeighborPositions = enginePartPositions<EnginePart.Symbol>(engineParts)
-        .flatMap { (x, y) -> mooreNeighbors(x, y) }
-    return engineParts
-        .let(::numberPositions)
-        .filter { (_, positions) -> positions.any { it in symbolNeighborPositions } }
-}
-
-inline fun <reified T : EnginePart> enginePartPositions(engineParts: List<List<EnginePart>>): List<Position> =
-    engineParts.indices
-        .flatMap { y -> engineParts[y].indices.map { x -> x to y } }
-        .filter { (x, y) -> engineParts[y][x] is T }
-
-fun numberPositions(engineParts: List<List<EnginePart>>): List<Pair<Int, List<Position>>> {
-    val numberPositions = mutableListOf<Pair<Int, List<Position>>>()
-    for (y in engineParts.indices) {
-        var digits = mutableListOf<EnginePart.Digit>()
-        var positions = mutableListOf<Position>()
-        for (x in engineParts[y].indices) {
-            val enginePart = engineParts[y][x]
-            if (enginePart is EnginePart.Digit) {
-                digits += enginePart
-                positions += x to y
-            } else {
-                if (digits.isNotEmpty()) {
-                    val number = digitsToInt(digits)
-                    numberPositions += number to positions
-                    digits = mutableListOf()
-                    positions = mutableListOf()
+fun EngineSchematic(file: File): EngineSchematic {
+    val symbolPositions = mutableListOf<Position>()
+    val gearPositions = mutableListOf<Position>()
+    val digitPositions = mutableListOf<Pair<Int, Position>>()
+    for ((y, line) in file.readLines().withIndex()) {
+        for ((x, char) in line.withIndex()) {
+            when {
+                char.isDigit() -> {
+                    digitPositions += char.digitToInt() to (x to y)
+                }
+                char == '*' -> {
+                    gearPositions += x to y
+                    symbolPositions += x to y
+                }
+                char != '.' -> {
+                    symbolPositions += x to y
                 }
             }
         }
-        if (digits.isNotEmpty()) {
-            val number = digitsToInt(digits)
-            numberPositions += number to positions
+    }
+    val numberPositions = numberPositions(digitPositions)
+    return EngineSchematic(symbolPositions, gearPositions, numberPositions)
+}
+
+fun partNumbersSum(engineSchematic: EngineSchematic): Int {
+    val (symbolPositions, _, numberPositions) = engineSchematic
+    val symbolNeighborPositions = symbolPositions.flatMap { (x, y) -> mooreNeighbors(x, y) }.toSet()
+    return numberPositions
+        .filter { (_, positions) -> positions.any { it in symbolNeighborPositions } }
+        .sumOf { (number, _) -> number }
+}
+
+fun gearRatiosSum(engineSchematic: EngineSchematic): Int {
+    val (_, gearPositions, numberPositions) = engineSchematic
+    return gearPositions
+        .asSequence()
+        .map { (x, y) -> mooreNeighbors(x, y) }
+        .map { gearNeighbors ->
+            numberPositions
+                .filter { (_, positions) -> gearNeighbors.any { it in positions } }
+                .map { (number, _) -> number }
         }
+        .filter { it.size == 2 }
+        .map { it.first() * it.last() }
+        .sum()
+}
+
+fun numberPositions(digitPositions: List<Pair<Int, Position>>): List<Pair<Int, Set<Position>>> {
+    val numberPositions = mutableListOf<Pair<Int, Set<Position>>>()
+    var number = 0
+    var positions = mutableSetOf<Position>()
+    for ((digit, position) in digitPositions) {
+        if (positions.isNotEmpty()) {
+            val (x, y) = position
+            val (lastX, lastY) = positions.last()
+            if (lastX + 1 != x || lastY != y) {
+                numberPositions += number to positions
+                number = 0
+                positions = mutableSetOf()
+            }
+        }
+        number = (number * 10) + digit
+        positions += position
+    }
+    if (positions.isNotEmpty()) {
+        numberPositions += number to positions
     }
     return numberPositions
 }
-
-fun digitsToInt(digits: List<EnginePart.Digit>): Int =
-    digits.map(EnginePart.Digit::value).fold(0) { acc, digit -> acc * 10 + digit }
 
 fun mooreNeighbors(x: Int, y: Int): List<Position> =
     listOf(

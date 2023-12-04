@@ -10,15 +10,15 @@ internal class Day03 {
 
     @Test
     fun part1() {
-        val engineSchematic = engineParts(input)
-        val partNumbersSum = partNumberPositions(engineSchematic).sumOf { (number, _) -> number }
+        val engineSchematic = EngineSchematic(input)
+        val partNumbersSum = partNumbersSum(engineSchematic)
         assertEquals(532445, partNumbersSum)
     }
 
     @Test
     fun part2() {
-        val engineSchematic = engineParts(input)
-        val gearRatiosSum = gearRatios(engineSchematic).sum()
+        val engineSchematic = EngineSchematic(input)
+        val gearRatiosSum = gearRatiosSum(engineSchematic)
         assertEquals(79842967, gearRatiosSum)
     }
 
