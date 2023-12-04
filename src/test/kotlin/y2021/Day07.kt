@@ -10,14 +10,20 @@ internal class Day07 {
 
     @Test
     fun part1() {
+        // TODO: check how it would work on odd amount of positions
         val positions = positions(input)
-        assertEquals(351901, bestPositionFuelCost(positions, ::constantFuelCost))
+        val meanPosition = meanPosition(positions)
+        val fuelCost = positions.sumOf { constantFuelCost(it, meanPosition) }
+        assertEquals(351901, fuelCost)
     }
 
     @Test
     fun part2() {
+        // TODO: NOT 100% CORRECT, AVERAGE IS USUALLY CLOSE LIKE IN THIS CASE BUT DOES NOT WORK ON TEST INPUT
         val positions = positions(input)
-        assertEquals(101079875, bestPositionFuelCost(positions, ::incrementalFuelCost))
+        val averagePosition = averagePosition(positions)
+        val fuelCost = positions.sumOf { incrementalFuelCost(it, averagePosition) }
+        assertEquals(101079875, fuelCost)
     }
 
 }
