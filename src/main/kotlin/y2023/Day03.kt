@@ -46,14 +46,13 @@ fun partNumbersSum(engineSchematic: EngineSchematic): Int {
 
 fun gearRatiosSum(engineSchematic: EngineSchematic): Int {
     val (_, gearPositions, numberPositions) = engineSchematic
+    val numbersByPosition = numberPositions
+        .flatMapIndexed { index, (number, positions) -> positions.map { position -> position to (number to index) } }
+        .toMap()
     return gearPositions
         .asSequence()
         .map { (x, y) -> mooreNeighbors(x, y) }
-        .map { gearNeighbors ->
-            numberPositions
-                .filter { (_, positions) -> positions.any { it in gearNeighbors } }
-                .map { (number, _) -> number }
-        }
+        .map { it.mapNotNull(numbersByPosition::get).distinctBy { (_, index) -> index }.map { (number, _) -> number } }
         .filter { it.size == 2 }
         .map { it.first() * it.last() }
         .sum()
