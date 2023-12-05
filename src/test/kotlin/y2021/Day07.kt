@@ -11,6 +11,7 @@ internal class Day07 {
     @Test
     fun part1() {
         val positions = positions(input)
+        // TODO: check the case of odd positions count
         val meanPosition = meanPosition(positions)
         val fuelCost = positions.sumOf { constantFuelCost(it, meanPosition) }
         assertEquals(351901, fuelCost)
