@@ -9,8 +9,22 @@ fun positions(file: File): List<Int> =
 fun meanPosition(positions: List<Int>): Int =
     positions.sorted()[positions.size / 2]
 
-fun averagePosition(positions: List<Int>) =
-    positions.sum() / positions.size
+fun positionRange(positions: List<Int>): Pair<Int, Int>? {
+    var min: Int? = null
+    var max: Int? = null
+    for (position in positions) {
+        if (min == null || position < min) {
+            min = position
+        }
+        if (max == null || position > max) {
+            max = position
+        }
+    }
+    if (min != null && max != null) {
+        return min to max
+    }
+    return null
+}
 
 fun constantFuelCost(from: Int, to: Int): Int =
     abs(from - to)
