@@ -28,7 +28,9 @@ internal class Day05 {
     fun part2() {
         // TODO: BRUTE FORCE DOES NOT WORK ON REAL INPUT
         val almanac = Almanac(input)
-        val seedRanges = almanac.seeds.chunked(2).flatMap { (start, length) -> (start until start + length) }
+        val seedRanges = almanac.seeds
+            .chunked(2)
+            .flatMap { (start, length) -> (start until start + length) }
         val lowestLocation = seedRanges
             .asSequence()
             .map { transformSource(almanac.seedToSoil, it) }
