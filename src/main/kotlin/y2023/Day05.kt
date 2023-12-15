@@ -2,21 +2,46 @@ package y2023
 
 import java.io.File
 
+data class Almanac(
+    val seeds: List<Long>,
+    val seedRanges: List<SourceRange>,
+    val seedToSoil: List<DestinationRange>,
+    val soilToFertilizer: List<DestinationRange>,
+    val fertilizerToWater: List<DestinationRange>,
+    val waterToLight: List<DestinationRange>,
+    val lightToTemperature: List<DestinationRange>,
+    val temperatureToHumidity: List<DestinationRange>,
+    val humidityToLocation: List<DestinationRange>,
+)
+
+data class SourceRange(
+    val start: Long,
+    val end: Long,
+)
+
+data class DestinationRange(
+    val start: Long,
+    val end: Long,
+    val factor: Long,
+)
+
 fun Almanac(file: File): Almanac {
     val almanacSections = file.readText().split("\n\n")
     if (almanacSections.size != 8) {
         throw Exception("invalid section count")
     }
     val seeds = almanacSections[0].removePrefix("seeds: ").split(" ").map(String::toLong)
-    val seedToSoil = almanacSections[1].removePrefix("seed-to-soil map:\n").let(::ranges)
-    val soilToFertilizer = almanacSections[2].removePrefix("soil-to-fertilizer map:\n").let(::ranges)
-    val fertilizerToWater = almanacSections[3].removePrefix("fertilizer-to-water map:\n").let(::ranges)
-    val waterToLight = almanacSections[4].removePrefix("water-to-light map:\n").let(::ranges)
-    val lightToTemperature = almanacSections[5].removePrefix("light-to-temperature map:\n").let(::ranges)
-    val temperatureToHumidity = almanacSections[6].removePrefix("temperature-to-humidity map:\n").let(::ranges)
-    val humidityToLocation = almanacSections[7].removePrefix("humidity-to-location map:\n").let(::ranges)
+    val seedRanges = sourceRanges(seeds)
+    val seedToSoil = almanacSections[1].removePrefix("seed-to-soil map:\n").let(::destinationRanges)
+    val soilToFertilizer = almanacSections[2].removePrefix("soil-to-fertilizer map:\n").let(::destinationRanges)
+    val fertilizerToWater = almanacSections[3].removePrefix("fertilizer-to-water map:\n").let(::destinationRanges)
+    val waterToLight = almanacSections[4].removePrefix("water-to-light map:\n").let(::destinationRanges)
+    val lightToTemperature = almanacSections[5].removePrefix("light-to-temperature map:\n").let(::destinationRanges)
+    val temperatureToHumidity = almanacSections[6].removePrefix("temperature-to-humidity map:\n").let(::destinationRanges)
+    val humidityToLocation = almanacSections[7].removePrefix("humidity-to-location map:\n").let(::destinationRanges)
     return Almanac(
         seeds,
+        seedRanges,
         seedToSoil,
         soilToFertilizer,
         fertilizerToWater,
@@ -27,94 +52,63 @@ fun Almanac(file: File): Almanac {
     )
 }
 
-fun ranges(section: String): List<Range> =
+fun sourceRanges(sources: List<Long>): List<SourceRange> =
+    sources.chunked(2).map { (start, length) -> SourceRange(start, start + length) }
+
+fun destinationRanges(section: String): List<DestinationRange> =
     section
         .split("\n")
         .filter(String::isNotBlank)
         .map { it.split(" ").map(String::toLong) }
-        .map { (destinationStart, sourceStart, length) -> Range(destinationStart, sourceStart, length) }
+        .map { (destinationStart, sourceStart, length) ->
+            DestinationRange(sourceStart, sourceStart + length, destinationStart - sourceStart)
+        }
 
-fun transformSource(ranges: List<Range>, source: Long): Long {
-    for (range in ranges) {
-        val (destinationStart, sourceStart, length) = range
-        if (source >= sourceStart && source < sourceStart + length) {
-            return destinationStart + (source - sourceStart)
+fun transform(source: Long, destinationRanges: List<DestinationRange>): Long {
+    for (destinationRange in destinationRanges) {
+        if (source >= destinationRange.start && source <= destinationRange.end) {
+            return source + destinationRange.factor
         }
     }
     return source
 }
 
-data class Almanac(
-    val seeds: List<Long>,
-    val seedToSoil: List<Range>,
-    val soilToFertilizer: List<Range>,
-    val fertilizerToWater: List<Range>,
-    val waterToLight: List<Range>,
-    val lightToTemperature: List<Range>,
-    val temperatureToHumidity: List<Range>,
-    val humidityToLocation: List<Range>,
-)
-
-data class Range(
-    val destinationStart: Long,
-    val sourceStart: Long,
-    val length: Long,
-)
-
-/////////////////////////////////////////////
-
-fun sourceRange(
-    sourceRange: Pair<Long, Long>,
-    destinationRanges: List<Triple<Long, Long, Long>>,
-): List<Triple<Long, Long, Long>> {
+fun transform(sourceRange: SourceRange, destinationRanges: List<DestinationRange>): List<SourceRange> {
 
     // FIND INTERSECTIONS
-    val (sourceStart, sourceEnd) = sourceRange
-    val intersections = mutableListOf<Triple<Long, Long, Long>>()
-    for ((destinationStart, destinationEnd, factor) in destinationRanges) {
-        val (intersectionStart, intersectionEnd) = intersection(sourceStart, sourceEnd, destinationStart, destinationEnd) ?: continue
-        val intersection = Triple(intersectionStart, intersectionEnd, factor)
+    val intersections = mutableListOf<DestinationRange>()
+    for (destinationRange in destinationRanges) {
+        val intersectionStart = maxOf(sourceRange.start, destinationRange.start)
+        val intersectionEnd = minOf(sourceRange.end, destinationRange.end)
+        if (intersectionStart > intersectionEnd) {
+            continue
+        }
+        val intersection = DestinationRange(intersectionStart, intersectionEnd, destinationRange.factor)
         intersections.add(intersection)
     }
     if (intersections.isEmpty()) {
-        return listOf(Triple(sourceStart, sourceEnd, 0L))
+        return listOf(SourceRange(sourceRange.start, sourceRange.end))
     }
 
     // FILL GAPS WITH SOURCE
+    val gaps = mutableListOf<SourceRange>()
     intersections.sortBy { (start, _, _) -> start }
-    if (sourceStart < intersections.first().first) {
-        val intersection = Triple(sourceStart, intersections.first().first - 1, 0L)
-        intersections.add(intersection)
+    if (sourceRange.start < intersections.first().start) {
+        val gap = SourceRange(sourceRange.start, intersections.first().start - 1)
+        gaps.add(gap)
     }
-    if (sourceEnd > intersections.last().second) {
-        val intersection = Triple(intersections.last().second + 1, sourceEnd, 0L)
+    if (sourceRange.end > intersections.last().end) {
+        val intersection = DestinationRange(intersections.last().end + 1, sourceRange.end, 0L)
         intersections.add(intersection)
     }
     for ((a, b) in intersections.windowed(2)) {
-        if (b.first - a.second > 1) {
-            val intersection = Triple(a.second + 1, b.first - 1, 0L)
-            intersections.add(intersection)
+        if (b.start - a.end > 1) {
+            val gap = SourceRange(a.end + 1, b.start - 1)
+            gaps.add(gap)
         }
     }
-    return intersections
-}
 
-fun transform(destinationRange: Triple<Long, Long, Long>): Pair<Long, Long> {
-    val (destinationStart, destinationEnd, factor) = destinationRange
-    val sourceStart = destinationStart + factor
-    val sourceEnd = destinationEnd + factor
-    return Pair(sourceStart, sourceEnd)
-}
+    // RETURN TRANSFORMED INTERSECTIONS AND SOURCE GAPS
+    return intersections.map { SourceRange(it.start + it.factor, it.end + it.factor) } + gaps
 
-fun intersection(sourceStart: Long, sourceEnd: Long, destinationStart: Long, destinationEnd: Long): Pair<Long, Long>? {
-    val start = maxOf(sourceStart, destinationStart)
-    val end = minOf(sourceEnd, destinationEnd)
-    if (start > end) {
-        return null
-    }
-    return Pair(start, end)
-}
-
-fun rangeToTriple(range: Range): Triple<Long, Long, Long> {
-    return Triple(range.sourceStart, range.sourceStart + range.length, range.destinationStart - range.sourceStart)
 }

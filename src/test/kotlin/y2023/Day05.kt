@@ -13,13 +13,13 @@ internal class Day05 {
         val almanac = Almanac(input)
         val lowestLocation = almanac.seeds
             .asSequence()
-            .map { transformSource(almanac.seedToSoil, it) }
-            .map { transformSource(almanac.soilToFertilizer, it) }
-            .map { transformSource(almanac.fertilizerToWater, it) }
-            .map { transformSource(almanac.waterToLight, it) }
-            .map { transformSource(almanac.lightToTemperature, it) }
-            .map { transformSource(almanac.temperatureToHumidity, it) }
-            .map { transformSource(almanac.humidityToLocation, it) }
+            .map { transform(it, almanac.seedToSoil) }
+            .map { transform(it, almanac.soilToFertilizer) }
+            .map { transform(it, almanac.fertilizerToWater) }
+            .map { transform(it, almanac.waterToLight) }
+            .map { transform(it, almanac.lightToTemperature) }
+            .map { transform(it, almanac.temperatureToHumidity) }
+            .map { transform(it, almanac.humidityToLocation) }
             .min()
         assertEquals(261668924, lowestLocation)
     }
@@ -27,17 +27,15 @@ internal class Day05 {
     @Test
     fun part2() {
         val almanac = Almanac(input)
-        val lowestLocation = almanac.seeds
+        val lowestLocation = almanac.seedRanges
             .asSequence()
-            .chunked(2)
-            .map { (start, length) -> Pair(start, start + length) }
-            .flatMap { sourceRange(it, almanac.seedToSoil.map(::rangeToTriple)).map(::transform) }
-            .flatMap { sourceRange(it, almanac.soilToFertilizer.map(::rangeToTriple)).map(::transform) }
-            .flatMap { sourceRange(it, almanac.fertilizerToWater.map(::rangeToTriple)).map(::transform) }
-            .flatMap { sourceRange(it, almanac.waterToLight.map(::rangeToTriple)).map(::transform) }
-            .flatMap { sourceRange(it, almanac.lightToTemperature.map(::rangeToTriple)).map(::transform) }
-            .flatMap { sourceRange(it, almanac.temperatureToHumidity.map(::rangeToTriple)).map(::transform) }
-            .flatMap { sourceRange(it, almanac.humidityToLocation.map(::rangeToTriple)).map(::transform) }
+            .flatMap { transform(it, almanac.seedToSoil) }
+            .flatMap { transform(it, almanac.soilToFertilizer) }
+            .flatMap { transform(it, almanac.fertilizerToWater) }
+            .flatMap { transform(it, almanac.waterToLight) }
+            .flatMap { transform(it, almanac.lightToTemperature) }
+            .flatMap { transform(it, almanac.temperatureToHumidity) }
+            .flatMap { transform(it, almanac.humidityToLocation) }
             .map { (start, _) -> start }
             .min()
         assertEquals(24261545, lowestLocation)
