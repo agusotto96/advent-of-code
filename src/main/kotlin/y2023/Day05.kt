@@ -84,7 +84,7 @@ fun transform(sourceRange: SourceRange, destinationRanges: List<DestinationRange
         intersections.add(intersection)
     }
     if (intersections.isEmpty()) {
-        return listOf(SourceRange(sourceRange.start, sourceRange.end))
+        return listOf(sourceRange)
     }
 
     // FILL GAPS WITH SOURCE
