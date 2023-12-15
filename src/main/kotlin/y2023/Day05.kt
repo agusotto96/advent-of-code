@@ -60,3 +60,61 @@ data class Range(
     val sourceStart: Long,
     val length: Long,
 )
+
+/////////////////////////////////////////////
+
+fun sourceRange(
+    sourceRange: Pair<Long, Long>,
+    destinationRanges: List<Triple<Long, Long, Long>>,
+): List<Triple<Long, Long, Long>> {
+
+    // FIND INTERSECTIONS
+    val (sourceStart, sourceEnd) = sourceRange
+    val intersections = mutableListOf<Triple<Long, Long, Long>>()
+    for ((destinationStart, destinationEnd, factor) in destinationRanges) {
+        val (intersectionStart, intersectionEnd) = intersection(sourceStart, sourceEnd, destinationStart, destinationEnd) ?: continue
+        val intersection = Triple(intersectionStart, intersectionEnd, factor)
+        intersections.add(intersection)
+    }
+    if (intersections.isEmpty()) {
+        return listOf(Triple(sourceStart, sourceEnd, 0L))
+    }
+
+    // FILL GAPS WITH SOURCE
+    intersections.sortBy { (start, _, _) -> start }
+    if (sourceStart < intersections.first().first) {
+        val intersection = Triple(sourceStart, intersections.first().first - 1, 0L)
+        intersections.add(intersection)
+    }
+    if (sourceEnd > intersections.last().second) {
+        val intersection = Triple(intersections.last().second + 1, sourceEnd, 0L)
+        intersections.add(intersection)
+    }
+    for ((a, b) in intersections.windowed(2)) {
+        if (b.first - a.second > 1) {
+            val intersection = Triple(a.second + 1, b.first - 1, 0L)
+            intersections.add(intersection)
+        }
+    }
+    return intersections
+}
+
+fun transform(destinationRange: Triple<Long, Long, Long>): Pair<Long, Long> {
+    val (destinationStart, destinationEnd, factor) = destinationRange
+    val sourceStart = destinationStart + factor
+    val sourceEnd = destinationEnd + factor
+    return Pair(sourceStart, sourceEnd)
+}
+
+fun intersection(sourceStart: Long, sourceEnd: Long, destinationStart: Long, destinationEnd: Long): Pair<Long, Long>? {
+    val start = maxOf(sourceStart, destinationStart)
+    val end = minOf(sourceEnd, destinationEnd)
+    if (start > end) {
+        return null
+    }
+    return Pair(start, end)
+}
+
+fun rangeToTriple(range: Range): Triple<Long, Long, Long> {
+    return Triple(range.sourceStart, range.sourceStart + range.length, range.destinationStart - range.sourceStart)
+}

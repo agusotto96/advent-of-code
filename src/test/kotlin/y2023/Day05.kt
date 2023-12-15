@@ -21,27 +21,26 @@ internal class Day05 {
             .map { transformSource(almanac.temperatureToHumidity, it) }
             .map { transformSource(almanac.humidityToLocation, it) }
             .min()
-        assertEquals(35, lowestLocation)
+        assertEquals(261668924, lowestLocation)
     }
 
     @Test
     fun part2() {
-        // TODO: BRUTE FORCE DOES NOT WORK ON REAL INPUT
         val almanac = Almanac(input)
-        val seedRanges = almanac.seeds
-            .chunked(2)
-            .flatMap { (start, length) -> (start until start + length) }
-        val lowestLocation = seedRanges
+        val lowestLocation = almanac.seeds
             .asSequence()
-            .map { transformSource(almanac.seedToSoil, it) }
-            .map { transformSource(almanac.soilToFertilizer, it) }
-            .map { transformSource(almanac.fertilizerToWater, it) }
-            .map { transformSource(almanac.waterToLight, it) }
-            .map { transformSource(almanac.lightToTemperature, it) }
-            .map { transformSource(almanac.temperatureToHumidity, it) }
-            .map { transformSource(almanac.humidityToLocation, it) }
+            .chunked(2)
+            .map { (start, length) -> Pair(start, start + length) }
+            .flatMap { sourceRange(it, almanac.seedToSoil.map(::rangeToTriple)).map(::transform) }
+            .flatMap { sourceRange(it, almanac.soilToFertilizer.map(::rangeToTriple)).map(::transform) }
+            .flatMap { sourceRange(it, almanac.fertilizerToWater.map(::rangeToTriple)).map(::transform) }
+            .flatMap { sourceRange(it, almanac.waterToLight.map(::rangeToTriple)).map(::transform) }
+            .flatMap { sourceRange(it, almanac.lightToTemperature.map(::rangeToTriple)).map(::transform) }
+            .flatMap { sourceRange(it, almanac.temperatureToHumidity.map(::rangeToTriple)).map(::transform) }
+            .flatMap { sourceRange(it, almanac.humidityToLocation.map(::rangeToTriple)).map(::transform) }
+            .map { (start, _) -> start }
             .min()
-        assertEquals(46, lowestLocation)
+        assertEquals(24261545, lowestLocation)
     }
 
 }
