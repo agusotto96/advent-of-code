@@ -64,14 +64,11 @@ fun destinationRanges(section: String): List<DestinationRange> =
             DestinationRange(sourceStart, sourceStart + length, destinationStart - sourceStart)
         }
 
-fun transform(source: Long, destinationRanges: List<DestinationRange>): Long {
-    for (destinationRange in destinationRanges) {
-        if (source >= destinationRange.start && source <= destinationRange.end) {
-            return source + destinationRange.factor
-        }
-    }
-    return source
-}
+fun transform(source: Long, destinationRanges: List<DestinationRange>): Long =
+    destinationRanges
+        .find { source >= it.start && source <= it.end }
+        ?.let { source + it.factor }
+        ?: source
 
 fun transform(sourceRange: SourceRange, destinationRanges: List<DestinationRange>): List<SourceRange> {
 
