@@ -95,8 +95,8 @@ fun transform(sourceRange: SourceRange, destinationRanges: List<DestinationRange
         gaps.add(gap)
     }
     if (sourceRange.end > intersections.last().end) {
-        val intersection = DestinationRange(intersections.last().end + 1, sourceRange.end, 0L)
-        intersections.add(intersection)
+        val gap = SourceRange(intersections.last().end + 1, sourceRange.end)
+        gaps.add(gap)
     }
     for ((a, b) in intersections.windowed(2)) {
         if (b.start - a.end > 1) {
