@@ -21,8 +21,14 @@ fun race(file: File): Race {
     return Race(time, distance)
 }
 
-fun winningWays(race: Race): Int =
-    (1 until race.time)
-        .asSequence()
-        .map { it * (race.time - it) }
-        .count { it > race.distance }
+fun winningWays(race: Race): Long {
+    for (hold in (0..race.time)) {
+        val speed = hold
+        val remainingTime = race.time - hold
+        val distance = speed * remainingTime
+        if (distance > race.distance) {
+            return race.time + 1 - hold * 2
+        }
+    }
+    return 0
+}
