@@ -18,4 +18,14 @@ internal class Day07 {
         assertEquals(247823654, totalWinnings)
     }
 
+    @Test
+    fun part2() {
+        val hands = hands(input, true)
+        val totalWinnings = hands
+            .sorted()
+            .withIndex()
+            .sumOf { (index, hand) -> (index + 1) * hand.bid }
+        assertEquals(245461700, totalWinnings)
+    }
+
 }

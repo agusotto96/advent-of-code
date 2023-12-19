@@ -5,10 +5,11 @@ import java.io.File
 data class Hand(
     val cards: List<Char>,
     val bid: Int,
+    val jokers: Boolean,
 ) : Comparable<Hand> {
 
-    private val typeStrength = handTypeStrength(cards)
-    private val cardStrengths = cards.map(::cardStrength)
+    private val typeStrength = handTypeStrength(cards, jokers)
+    private val cardStrengths = cards.map { cardStrength(it, jokers) }
 
     override fun compareTo(other: Hand): Int {
         if (this.typeStrength > other.typeStrength) {
@@ -30,14 +31,23 @@ data class Hand(
 
 }
 
-fun hands(file: File): List<Hand> =
+fun hands(file: File, jokers: Boolean = false): List<Hand> =
     file.readLines()
         .map { line -> line.split(" ") }
-        .map { (cards, bid) -> Hand(cards.toList(), bid.let(String::toInt)) }
+        .map { (cards, bid) -> Hand(cards.toList(), bid.let(String::toInt), jokers) }
 
-fun handTypeStrength(cards: List<Char>): Int {
-    val counts = cards.groupingBy { it }.eachCount().values.sorted()
-    return when (counts) {
+fun handTypeStrength(cards: List<Char>, jokers: Boolean): Int {
+    val counts = cards.groupingBy { it }.eachCount().values.toMutableList()
+    if (jokers) {
+        val jokersCount = cards.count { it == 'J' }
+        if (jokersCount in 1..4) {
+            counts.remove(jokersCount)
+            val max = counts.maxOrNull()!!
+            counts.remove(max)
+            counts.add(jokersCount + max)
+        }
+    }
+    return when (counts.sorted()) {
         listOf(5) -> 7
         listOf(1, 4) -> 6
         listOf(2, 3) -> 5
@@ -49,12 +59,12 @@ fun handTypeStrength(cards: List<Char>): Int {
     }
 }
 
-fun cardStrength(card: Char): Int =
+fun cardStrength(card: Char, jokers: Boolean): Int =
     when (card) {
         'A' -> 13
         'K' -> 12
         'Q' -> 11
-        'J' -> 10
+        'J' -> if (jokers) 0 else 10
         'T' -> 9
         '9' -> 8
         '8' -> 7
