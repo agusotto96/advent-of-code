@@ -15,4 +15,11 @@ internal class Day08 {
         assertEquals(19637, steps)
     }
 
+    @Test
+    fun part2() {
+        val maps = Maps(input)
+        val steps = ghostStepsToEnd(maps)
+        assertEquals(8811050362409, steps)
+    }
+
 }
