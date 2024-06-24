@@ -6,7 +6,7 @@ import java.io.File
 
 internal class Day02 {
 
-    private val input = File("src/test/resources/y2021/Day02.txt")
+    private val input = File("../inputs/202102.txt")
 
     @Test
     fun part1() {

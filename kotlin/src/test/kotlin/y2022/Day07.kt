@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 
 internal class Day07 {
 
-    private val input = File("src/test/resources/y2022/Day07.txt")
+    private val input = File("../inputs/202207.txt")
 
     @Test
     fun part1() {
