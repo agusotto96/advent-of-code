@@ -5,17 +5,9 @@ import java.io.File
 fun depths(file: File): List<Int> =
     file.readLines().map(String::toInt)
 
-fun depths(file: File, windowSize: Int): List<Int> =
-    depths(file).windowed(windowSize).map(List<Int>::sum)
-
-fun depthIncrease(depths: List<Int>): Int {
-    var increased = 0
-    var lastDepth: Int? = null
-    for (depth in depths) {
-        if (lastDepth != null && lastDepth < depth) {
-            increased++
-        }
-        lastDepth = depth
-    }
-    return increased
-}
+fun depthIncrements(depths: List<Int>, windowSize: Int = 1): Int =
+    depths.asSequence()
+        .windowed(windowSize)
+        .map { it.sum() }
+        .windowed(2)
+        .count { (a, b) -> b > a }
