@@ -25,14 +25,18 @@ func depths(path string) ([]int, error) {
 	return depths, scanner.Err()
 }
 
-func depthIncrements(depths []int) int {
+func depthIncrements(depths []int, windowSize int) int {
 	var increments int
-	for i := 1; i < len(depths); i++ {
-		current := depths[i]
-		last := depths[i-1]
-		if current > last {
+	var lastDepth int
+	for i := 0; i <= len(depths)-windowSize; i++ {
+		var depth int
+		for _, d := range depths[i : i+windowSize] {
+			depth += d
+		}
+		if i != 0 && depth > lastDepth {
 			increments++
 		}
+		lastDepth = depth
 	}
 	return increments
 }

@@ -4,14 +4,25 @@ import (
 	"testing"
 )
 
-func TestDay01(t *testing.T) {
+func TestDepthIncrements(t *testing.T) {
+	tests := []struct {
+		name       string
+		windowSize int
+		expected   int
+	}{
+		{"Day01", 1, 1655},
+		{"Day02", 3, 1683},
+	}
 	depths, err := depths("../inputs/202101.txt")
 	if err != nil {
 		t.Fatalf("failed to read depths: %v", err)
 	}
-	depthIncrements := depthIncrements(depths)
-	expected := 1655
-	if depthIncrements != expected {
-		t.Errorf("depth increments = %d; want %d", depthIncrements, expected)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			depthIncrements := depthIncrements(depths, tt.windowSize)
+			if depthIncrements != tt.expected {
+				t.Errorf("depth increments = %d; want %d", depthIncrements, tt.expected)
+			}
+		})
 	}
 }
