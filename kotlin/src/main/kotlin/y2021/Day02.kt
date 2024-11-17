@@ -12,9 +12,9 @@ sealed class Command(val units: Int) {
 }
 
 data class State(
-    val horizontalPosition: Int,
-    val depth: Int,
-    val aim: Int,
+    val horizontalPosition: Int = 0,
+    val depth: Int = 0,
+    val aim: Int = 0,
 )
 
 fun commands(file: File): List<Command> =
@@ -30,9 +30,9 @@ fun commands(file: File): List<Command> =
             }
         }
 
-fun course(commands: List<Command>, action: (State, Command) -> State): Int =
+fun course(state: State, commands: List<Command>, action: (State, Command) -> State): Int =
     commands
-        .fold(State(0, 0, 0), action)
+        .fold(state, action)
         .let { it.horizontalPosition * it.depth }
 
 fun simpleAction(state: State, command: Command): State =
