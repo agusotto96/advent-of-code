@@ -10,14 +10,14 @@ internal class Day02 {
 
     @Test
     fun part1() {
-        val instructions = instructions(input)
-        assertEquals(1670340, simpleCourse(instructions))
+        val commands = commands(input)
+        assertEquals(1670340, course(commands, ::simpleAction))
     }
 
     @Test
     fun part2() {
-        val instructions = instructions(input)
-        assertEquals(1954293920, complexCourse(instructions))
+        val commands = commands(input)
+        assertEquals(1954293920, course(commands, ::complexAction))
     }
 
 }
