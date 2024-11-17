@@ -4,14 +4,14 @@ import (
 	"testing"
 )
 
-func TestDepthIncrements(t *testing.T) {
+func TestDay01(t *testing.T) {
 	tests := []struct {
 		name       string
 		windowSize int
 		expected   int
 	}{
-		{"Day01", 1, 1655},
-		{"Day02", 3, 1683},
+		{"part_1", 1, 1655},
+		{"part_2", 3, 1683},
 	}
 	depths, err := depths("../inputs/202101.txt")
 	if err != nil {
