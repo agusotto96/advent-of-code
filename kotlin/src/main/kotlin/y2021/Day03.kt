@@ -2,6 +2,42 @@ package y2021
 
 import java.io.File
 
+
+data class Report(
+    val numbers: List<UInt>,
+    val width: Int,
+)
+
+data class Rates(
+    val gamma: UInt = 0u,
+    val epsilon: UInt = 0u,
+)
+
+fun report(file: File): Report {
+    val lines = file.readLines()
+    return Report(
+        numbers = lines.map { it.toUInt(2) },
+        width = lines.first().count(),
+    )
+}
+
+fun powerConsumption(report: Report): UInt {
+    val (gamma, epsilon) = rates(report)
+    return gamma * epsilon
+}
+
+fun rates(report: Report): Rates =
+    (0 until report.width)
+        .asSequence()
+        .map { 1u shl it }
+        .fold(Rates()) { rates, mask ->
+            if (report.numbers.count { it and mask > 0u } > report.numbers.count() / 2) {
+                rates.copy(gamma = rates.gamma or mask)
+            } else {
+                rates.copy(epsilon = rates.epsilon or mask)
+            }
+        }
+
 fun lifeSupportRating(report: List<String>): Int {
     val oxygenGeneratorRating = oxygenGeneratorRating(report)
     val co2ScrubberRating = co2ScrubberRating(report)
@@ -33,32 +69,3 @@ fun co2ScrubberRating(report: List<String>): String {
     }
     throw Exception()
 }
-
-fun report(file: File): List<String> =
-    file.readLines()
-
-fun powerConsumption(report: List<String>): Int {
-    val gammaRate = gammaRate(report)
-    val epsilonRate = epsilonRate(report)
-    return Integer.parseInt(gammaRate, 2) * Integer.parseInt(epsilonRate, 2)
-}
-
-fun gammaRate(report: List<String>): String {
-    val length = report.first().length
-    val gammaRate = CharArray(length)
-    for (index in 0 until length) {
-        var bitCount = 0
-        for (number in report) {
-            if (number[index] == '1') {
-                bitCount++
-            }
-        }
-        gammaRate[index] = if (bitCount > report.count() / 2) '1' else '0'
-    }
-    return gammaRate.concatToString()
-}
-
-fun epsilonRate(report: List<String>): String =
-    gammaRate(report)
-        .map { if (it == '0') '1' else '0' }
-        .joinToString("")
