@@ -78,17 +78,19 @@ However, if the instruction modifies the instruction pointer, that value is used
 automatically increased.
 */
 
-const val ADD_OPCODE = 1
-const val MULTIPLY_OPCODE = 2
-const val INPUT_OPCODE = 3
-const val OUTPUT_OPCODE = 4
-const val JUMP_IF_TRUE_OPCODE = 5
-const val JUMP_IF_FALSE_OPCODE = 6
-const val LESS_THAN_OPCODE = 7
-const val EQUALS_OPCODE = 8
-const val FINISH_OPCODE = 99
+// OPCODES
+const val ADD = 1
+const val MULTIPLY = 2
+const val INPUT = 3
+const val OUTPUT = 4
+const val JUMP_IF_TRUE = 5
+const val JUMP_IF_FALSE = 6
+const val LESS_THAN = 7
+const val EQUALS = 8
+const val FINISH = 99
 
-const val IMMEDIATE_PARAMETER_MODE = 1
+// PARAM MODES
+const val IMMEDIATE = 1
 
 fun intcodes(file: File): List<Int> =
     file.readLines()
@@ -96,96 +98,82 @@ fun intcodes(file: File): List<Int> =
         .map { it.toInt() }
 
 fun run(intcodes: MutableList<Int>, noun: Int? = null, verb: Int? = null, input: Int? = null): Int {
-    if (noun != null) {
-        intcodes[1] = noun
-    }
-    if (verb != null) {
-        intcodes[2] = verb
-    }
+    if (noun != null) intcodes[1] = noun
+    if (verb != null) intcodes[2] = verb
     var output = 0
-    var currentPosition = 0
-    while (currentPosition < intcodes.size) {
-        val currentIntcode = intcodes[currentPosition]
-        val firstParameterMode = (currentIntcode / 100) % 10
-        val secondParameterMode = (currentIntcode / 1000) % 10
-        val opcode = currentIntcode % 100
+    var i = 0
+    while (i < intcodes.size) {
+        val intcode = intcodes[i]
+        val firstParamMode = (intcode / 100) % 10
+        val secondParamMode = (intcode / 1000) % 10
+        val opcode = intcode % 100
         when (opcode) {
-            ADD_OPCODE -> {
-                val firstParameter = intcodes[currentPosition + 1]
-                val secondParameter = intcodes[currentPosition + 2]
-                val thirdParameter = intcodes[currentPosition + 3]
-                val firstInput = if (firstParameterMode == IMMEDIATE_PARAMETER_MODE) firstParameter else intcodes[firstParameter]
-                val secondInput = if (secondParameterMode == IMMEDIATE_PARAMETER_MODE) secondParameter else intcodes[secondParameter]
-                val output = firstInput + secondInput
-                intcodes[thirdParameter] = output
-                currentPosition += 4
+            ADD -> {
+                val (firstParam, secondParam, thirdParam) = intcodes.subList(i + 1, i + 4)
+                val firstValue = if (firstParamMode == IMMEDIATE) firstParam else intcodes[firstParam]
+                val secondValue = if (secondParamMode == IMMEDIATE) secondParam else intcodes[secondParam]
+                val result = firstValue + secondValue
+                intcodes[thirdParam] = result
+                i += 4
             }
-            MULTIPLY_OPCODE -> {
-                val firstParameter = intcodes[currentPosition + 1]
-                val secondParameter = intcodes[currentPosition + 2]
-                val thirdParameter = intcodes[currentPosition + 3]
-                val firstInput = if (firstParameterMode == IMMEDIATE_PARAMETER_MODE) firstParameter else intcodes[firstParameter]
-                val secondInput = if (secondParameterMode == IMMEDIATE_PARAMETER_MODE) secondParameter else intcodes[secondParameter]
-                val output = firstInput * secondInput
-                intcodes[thirdParameter] = output
-                currentPosition += 4
+            MULTIPLY -> {
+                val (firstParam, secondParam, thirdParam) = intcodes.subList(i + 1, i + 4)
+                val firstValue = if (firstParamMode == IMMEDIATE) firstParam else intcodes[firstParam]
+                val secondValue = if (secondParamMode == IMMEDIATE) secondParam else intcodes[secondParam]
+                val result = firstValue * secondValue
+                intcodes[thirdParam] = result
+                i += 4
             }
-            INPUT_OPCODE -> {
-                val firstParameter = intcodes[currentPosition + 1]
+            INPUT -> {
+                val firstParam = intcodes[i + 1]
                 if (input != null) {
-                    intcodes[firstParameter] = input
+                    intcodes[firstParam] = input
                 }
-                currentPosition += 2
+                i += 2
             }
-            OUTPUT_OPCODE -> {
-                val firstParameter = intcodes[currentPosition + 1]
-                val firstInput = if (firstParameterMode == IMMEDIATE_PARAMETER_MODE) firstParameter else intcodes[firstParameter]
-                output = firstInput
-                currentPosition += 2
+            OUTPUT -> {
+                val firstParam = intcodes[i + 1]
+                val firstValue = if (firstParamMode == IMMEDIATE) firstParam else intcodes[firstParam]
+                output = firstValue
+                i += 2
             }
-            JUMP_IF_TRUE_OPCODE -> {
-                val firstParameter = intcodes[currentPosition + 1]
-                val secondParameter = intcodes[currentPosition + 2]
-                val firstInput = if (firstParameterMode == IMMEDIATE_PARAMETER_MODE) firstParameter else intcodes[firstParameter]
-                val secondInput = if (secondParameterMode == IMMEDIATE_PARAMETER_MODE) secondParameter else intcodes[secondParameter]
-                if (firstInput != 0) {
-                    currentPosition = secondInput
+            JUMP_IF_TRUE -> {
+                val (firstParam, secondParam) = intcodes.subList(i + 1, i + 3)
+                val firstValue = if (firstParamMode == IMMEDIATE) firstParam else intcodes[firstParam]
+                val secondValue = if (secondParamMode == IMMEDIATE) secondParam else intcodes[secondParam]
+                if (firstValue != 0) {
+                    i = secondValue
                 } else {
-                    currentPosition += 3
+                    i += 3
                 }
             }
-            JUMP_IF_FALSE_OPCODE -> {
-                val firstParameter = intcodes[currentPosition + 1]
-                val secondParameter = intcodes[currentPosition + 2]
-                val firstInput = if (firstParameterMode == IMMEDIATE_PARAMETER_MODE) firstParameter else intcodes[firstParameter]
-                val secondInput = if (secondParameterMode == IMMEDIATE_PARAMETER_MODE) secondParameter else intcodes[secondParameter]
-                if (firstInput == 0) {
-                    currentPosition = secondInput
+            JUMP_IF_FALSE -> {
+                val (firstParam, secondParam) = intcodes.subList(i + 1, i + 3)
+                val firstValue = if (firstParamMode == IMMEDIATE) firstParam else intcodes[firstParam]
+                val secondValue = if (secondParamMode == IMMEDIATE) secondParam else intcodes[secondParam]
+                if (firstValue == 0) {
+                    i = secondValue
                 } else {
-                    currentPosition += 3
+                    i += 3
                 }
             }
-            LESS_THAN_OPCODE -> {
-                val firstParameter = intcodes[currentPosition + 1]
-                val secondParameter = intcodes[currentPosition + 2]
-                val thirdParameter = intcodes[currentPosition + 3]
-                val firstInput = if (firstParameterMode == IMMEDIATE_PARAMETER_MODE) firstParameter else intcodes[firstParameter]
-                val secondInput = if (secondParameterMode == IMMEDIATE_PARAMETER_MODE) secondParameter else intcodes[secondParameter]
-                val output = if (firstInput < secondInput) 1 else 0
-                intcodes[thirdParameter] = output
-                currentPosition += 4
+            LESS_THAN -> {
+                val (firstParam, secondParam, thirdParam) = intcodes.subList(i + 1, i + 4)
+                val firstValue = if (firstParamMode == IMMEDIATE) firstParam else intcodes[firstParam]
+                val secondValue = if (secondParamMode == IMMEDIATE) secondParam else intcodes[secondParam]
+                val result = if (firstValue < secondValue) 1 else 0
+                intcodes[thirdParam] = result
+                i += 4
             }
-            EQUALS_OPCODE -> {
-                val firstParameter = intcodes[currentPosition + 1]
-                val secondParameter = intcodes[currentPosition + 2]
-                val thirdParameter = intcodes[currentPosition + 3]
-                val firstInput = if (firstParameterMode == IMMEDIATE_PARAMETER_MODE) firstParameter else intcodes[firstParameter]
-                val secondInput = if (secondParameterMode == IMMEDIATE_PARAMETER_MODE) secondParameter else intcodes[secondParameter]
-                val output = if (firstInput == secondInput) 1 else 0
-                intcodes[thirdParameter] = output
-                currentPosition += 4
+            EQUALS -> {
+                val (firstParam, secondParam, thirdParam) = intcodes.subList(i + 1, i + 4)
+                val firstValue = if (firstParamMode == IMMEDIATE) firstParam else intcodes[firstParam]
+                val secondValue = if (secondParamMode == IMMEDIATE) secondParam else intcodes[secondParam]
+                val result = if (firstValue == secondValue) 1 else 0
+                intcodes[thirdParam] = result
+                i += 4
             }
-            FINISH_OPCODE -> break
+            FINISH -> break
         }
     }
     return output
