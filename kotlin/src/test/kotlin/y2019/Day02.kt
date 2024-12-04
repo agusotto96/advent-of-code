@@ -10,8 +10,9 @@ internal class Day02 {
 
     @Test
     fun part1() {
-        val intcodes = intcodes(input)
-        assertEquals(2842648, run(intcodes, 12, 2))
+        val intcodes = intcodes(input).toMutableList()
+        run(intcodes, noun = 12, verb = 2)
+        assertEquals(2842648, intcodes.first())
     }
 
     @Test
@@ -19,7 +20,9 @@ internal class Day02 {
         val intcodes = intcodes(input)
         for (noun in 0..99) {
             for (verb in 0..99) {
-                if (run(intcodes, noun, verb) == 19690720) {
+                val intcodes = intcodes.toMutableList()
+                run(intcodes, noun = noun, verb = verb)
+                if (intcodes.first() == 19690720) {
                     assertEquals(9074, 100 * noun + verb)
                 }
             }
