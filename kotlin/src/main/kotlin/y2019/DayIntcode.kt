@@ -97,7 +97,8 @@ fun intcodes(file: File): List<Int> =
         .flatMap { it.split(",") }
         .map { it.toInt() }
 
-fun run(intcodes: MutableList<Int>, noun: Int? = null, verb: Int? = null, input: Int? = null): Int {
+fun run(intcodes: MutableList<Int>, noun: Int? = null, verb: Int? = null, vararg inputs: Int): Int {
+    val inputIterator = inputs.iterator()
     if (noun != null) intcodes[1] = noun
     if (verb != null) intcodes[2] = verb
     var output = 0
@@ -126,9 +127,7 @@ fun run(intcodes: MutableList<Int>, noun: Int? = null, verb: Int? = null, input:
             }
             INPUT -> {
                 val firstParam = intcodes[i + 1]
-                if (input != null) {
-                    intcodes[firstParam] = input
-                }
+                intcodes[firstParam] = inputIterator.next()
                 i += 2
             }
             OUTPUT -> {
