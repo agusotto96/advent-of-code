@@ -1,5 +1,5 @@
-use rust::day01::depth_increments;
-use rust::day01::depths;
+use rust::y2021_d01::depth_increments;
+use rust::y2021_d01::depths;
 
 #[test]
 fn day_01_part_1() -> Result<(), Box<dyn std::error::Error>> {
