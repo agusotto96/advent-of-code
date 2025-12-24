@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestDay01(t *testing.T) {
+func Test202101(t *testing.T) {
 	tests := []struct {
 		name       string
 		windowSize int
