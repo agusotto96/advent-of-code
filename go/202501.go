@@ -2,53 +2,37 @@ package main
 
 import (
 	"bufio"
-	"os"
+	"io"
 	"strconv"
 )
 
-type Direction string
+func rotations(r io.Reader) ([]int, error) {
+	var rotations []int
 
-type rotation struct {
-	isLeft   bool
-	distance int
-}
-
-func rotations(path string) ([]rotation, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var rotations []rotation
-	scanner := bufio.NewScanner(file)
-
+	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := scanner.Text()
-		isLeft := line[0] == 'L'
-		distance, err := strconv.Atoi(line[1:])
+
+		rotation, err := strconv.Atoi(line[1:])
 		if err != nil {
 			return nil, err
 		}
-		rotation := rotation{
-			isLeft:   isLeft,
-			distance: distance,
+
+		isLeft := line[0] == 'L'
+		if isLeft {
+			rotation = -rotation
 		}
+
 		rotations = append(rotations, rotation)
 	}
 
 	return rotations, scanner.Err()
 }
 
-func password(rotations []rotation) int {
+func password(dial int, rotations []int) int {
 	password := 0
-	dial := 50
 	for _, rotation := range rotations {
-		distance := rotation.distance
-		if rotation.isLeft {
-			distance = -distance
-		}
-		dial = dial + distance
+		dial = dial + rotation
 		if dial%100 == 0 {
 			password += 1
 		}
