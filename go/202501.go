@@ -3,36 +3,42 @@ package main
 import (
 	"bufio"
 	"io"
+	"iter"
 	"math"
 	"strconv"
 )
 
-func rotations(r io.Reader) ([]int, error) {
-	var rotations []int
-
-	scanner := bufio.NewScanner(r)
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		rotation, err := strconv.Atoi(line[1:])
-		if err != nil {
-			return nil, err
+func rotations(r io.Reader) iter.Seq2[int, error] {
+	return func(yield func(int, error) bool) {
+		scanner := bufio.NewScanner(r)
+		for scanner.Scan() {
+			line := scanner.Text()
+			rotation, err := strconv.Atoi(line[1:])
+			if err != nil {
+				if !yield(0, err) {
+					return
+				}
+				continue
+			}
+			if line[0] == 'L' {
+				rotation = -rotation
+			}
+			if !yield(rotation, nil) {
+				return
+			}
 		}
-
-		isLeft := line[0] == 'L'
-		if isLeft {
-			rotation = -rotation
+		if err := scanner.Err(); err != nil {
+			_ = yield(0, err)
 		}
-
-		rotations = append(rotations, rotation)
 	}
-
-	return rotations, scanner.Err()
 }
 
-func password(dial int, countAllZeros bool, rotations []int) int {
+func password(dial int, countAllZeros bool, rotations iter.Seq2[int, error]) (int, error) {
 	password := 0
-	for _, rotation := range rotations {
+	for rotation, err := range rotations {
+		if err != nil {
+			return 0, err
+		}
 		newDial := dial + rotation
 		newDial = newDial % 100
 		if newDial < 0 {
@@ -55,5 +61,5 @@ func password(dial int, countAllZeros bool, rotations []int) int {
 		}
 		dial = newDial
 	}
-	return password
+	return password, nil
 }

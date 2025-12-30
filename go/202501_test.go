@@ -54,11 +54,11 @@ func Test202501(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rotations, err := rotations(tt.r)
+			rotations := rotations(tt.r)
+			password, err := password(tt.dial, tt.countAllZeros, rotations)
 			if err != nil {
-				t.Fatalf("failed to read rotations: %v", err)
+				t.Fatalf("failed to calculate password: %v", err)
 			}
-			password := password(tt.dial, tt.countAllZeros, rotations)
 			if password != tt.password {
 				t.Errorf("password = %d; want %d", password, tt.password)
 			}
