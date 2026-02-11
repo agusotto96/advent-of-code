@@ -10,9 +10,7 @@ fun heightmap(file: File): Heightmap =
     file.readLines().map { it.map(Char::digitToInt) }
 
 fun lowestHeightsRiskLevel(heightmap: Heightmap): Int =
-    lowestHeights(heightmap)
-        .map(::riskLevel)
-        .sum()
+    lowestHeights(heightmap).sumOf(::riskLevel)
 
 fun multiplyBiggestBasinSizes(heightmap: Heightmap, times: Int): Int =
     basinSizes(heightmap)

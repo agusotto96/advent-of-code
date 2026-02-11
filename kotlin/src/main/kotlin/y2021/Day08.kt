@@ -26,7 +26,7 @@ fun uniqueSegmentNumberDigits(entries: List<Display>): Int =
     entries.flatMap(Display::digits).map(Segments::size).count(uniquePatternSizes::contains)
 
 fun displaysOutputSum(displays: List<Display>): Int =
-    displays.map(::output).sum()
+    displays.sumOf(::output)
 
 fun output(display: Display): Int {
     val digitsByPattern = digitsByPattern(display.patterns)

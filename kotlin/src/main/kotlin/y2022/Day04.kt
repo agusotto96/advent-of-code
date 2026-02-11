@@ -8,11 +8,13 @@ typealias ElfSectionsPair = Pair<ElfSections, ElfSections>
 
 fun elfSectionsPairs(file: File): List<ElfSectionsPair> =
     file.readLines()
+        .asSequence()
         .flatMap { it.split(",") }
         .map { it.split("-") }
         .map { it.first().toInt()..it.last().toInt() }
         .chunked(2)
         .map { it.first() to it.last() }
+        .toList()
 
 fun fullOverlap(pair: ElfSectionsPair): Boolean =
     pair.first.all(pair.second::contains) || pair.second.all(pair.first::contains)

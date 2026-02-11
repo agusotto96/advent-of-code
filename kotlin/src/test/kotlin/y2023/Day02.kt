@@ -23,7 +23,7 @@ internal class Day02 {
     @Test
     fun part2() {
         val games = games(input)
-        val minimumBagPowerSum = games.map(::minimumBagPower).sum()
+        val minimumBagPowerSum = games.sumOf(::minimumBagPower)
         assertEquals(74229, minimumBagPowerSum)
     }
 

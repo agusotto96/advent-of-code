@@ -49,7 +49,7 @@ fun Outcome(symbol: Char): Outcome =
     }
 
 fun assumedIndicationsPoints(assumedIndications: List<AssumedIndication>): Int =
-    assumedIndications.map(::assumedIndicationPoints).sum()
+    assumedIndications.sumOf(::assumedIndicationPoints)
 
 fun assumedIndicationPoints(assumedIndication: AssumedIndication): Int =
     shapePoints(assumedIndication.second) + Outcome(assumedIndication).let(::outcomePoints)
@@ -81,7 +81,7 @@ fun Outcome(assumedIndication: AssumedIndication): Outcome =
     }
 
 fun trueIndicationsPoints(trueIndications: List<TrueIndication>): Int =
-    trueIndications.map(::trueIndicationPoints).sum()
+    trueIndications.sumOf(::trueIndicationPoints)
 
 fun trueIndicationPoints(trueIndication: TrueIndication): Int =
     Shape(trueIndication).let(::shapePoints) + outcomePoints(trueIndication.second)

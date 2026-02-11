@@ -96,10 +96,10 @@ fun repeatedItem(items: Iterable<Iterable<Item>>): Item =
     items.reduce { a, b -> a.intersect(b.toSet()) }.first()
 
 fun rucksacksPrioritySum(rucksacks: List<Rucksack>): Int =
-    rucksacks.map(::repeatedItem).map(::priority).sum()
+    rucksacks.map(::repeatedItem).sumOf(::priority)
 
 fun elfGroupsPrioritySum(elfGroups: List<ElfGroup>): Int =
-    elfGroups.map(::repeatedItem).map(::priority).sum()
+    elfGroups.map(::repeatedItem).sumOf(::priority)
 
 fun priority(item: Item): Int =
     when (item) {

@@ -23,9 +23,8 @@ fun race(file: File): Race {
 
 fun winningWays(race: Race): Long {
     for (hold in (0..race.time)) {
-        val speed = hold
         val remainingTime = race.time - hold
-        val distance = speed * remainingTime
+        val distance = hold * remainingTime
         if (distance > race.distance) {
             return race.time + 1 - hold * 2
         }

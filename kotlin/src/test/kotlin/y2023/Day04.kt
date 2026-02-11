@@ -11,7 +11,7 @@ internal class Day04 {
     @Test
     fun part1() {
         val scratchcards = scratchcards(input)
-        val totalPoints = scratchcards.map(::points).sum()
+        val totalPoints = scratchcards.sumOf(::points)
         assertEquals(21568, totalPoints)
     }
 

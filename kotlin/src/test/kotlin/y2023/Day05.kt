@@ -19,8 +19,7 @@ internal class Day05 {
             .map { transform(it, almanac.waterToLight) }
             .map { transform(it, almanac.lightToTemperature) }
             .map { transform(it, almanac.temperatureToHumidity) }
-            .map { transform(it, almanac.humidityToLocation) }
-            .min()
+            .minOfOrNull { transform(it, almanac.humidityToLocation) }
         assertEquals(261668924, lowestLocation)
     }
 
@@ -36,8 +35,7 @@ internal class Day05 {
             .flatMap { transform(it, almanac.lightToTemperature) }
             .flatMap { transform(it, almanac.temperatureToHumidity) }
             .flatMap { transform(it, almanac.humidityToLocation) }
-            .map { (start, _) -> start }
-            .min()
+            .minOfOrNull { (start, _) -> start }
         assertEquals(24261545, lowestLocation)
     }
 
