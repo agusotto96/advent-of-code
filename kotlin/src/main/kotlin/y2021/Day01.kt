@@ -1,13 +1,10 @@
 package y2021
 
-import java.io.File
+fun depths(lines: Sequence<String>): Sequence<Int> =
+    lines.map(String::toInt)
 
-fun depths(file: File): List<Int> =
-    file.readLines().map(String::toInt)
-
-fun depthIncrements(depths: List<Int>, windowSize: Int = 1): Int =
-    depths.asSequence()
-        .windowed(windowSize)
+fun depthIncrements(depths: Sequence<Int>, windowSize: Int = 1): Int =
+    depths.windowed(windowSize)
         .map { it.sum() }
         .windowed(2)
         .count { (a, b) -> b > a }
